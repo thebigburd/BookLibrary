@@ -12,7 +12,7 @@ public class UserService {
 
     public List<User> getUsers(){
         return List.of(
-                new User("bigburd@gmail.com", "Burd",
+                new User("bigburd@gmail.com", "Big", "Burd",
                         LocalDate.of(1999, Month.JANUARY, 17),
                         24)
         );

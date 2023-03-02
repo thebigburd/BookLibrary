@@ -1,20 +1,34 @@
 package com.thebigburd.LibraryApplication.User;
 
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name="people")
 public class User {
 
-
+    @Id
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "USER_SEQUENCE",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "user_sequence"
+    )
     private Long id;
     private String email;
     private String name;
+    private String surname;
     private LocalDate dateOfBirth;
     private Integer age;
 
-    public User(String email, String name, LocalDate dateOfBirth, Integer age) {
+    public User(String email, String name, String surname, LocalDate dateOfBirth, Integer age) {
         this.email = email;
         this.name = name;
+        this.surname = surname;
         this.dateOfBirth = dateOfBirth;
         this.age = age;
     }
@@ -43,6 +57,14 @@ public class User {
         this.name = name;
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -65,8 +87,9 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
-                ", dateOfBirth='" + dateOfBirth + '\'' +
-                ", age='" + age + '\'' +
+                ", surname='" + surname + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", age=" + age +
                 '}';
     }
 }

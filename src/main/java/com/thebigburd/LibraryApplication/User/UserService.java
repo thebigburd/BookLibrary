@@ -1,20 +1,21 @@
 package com.thebigburd.LibraryApplication.User;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 @Service
 public class UserService {
 
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public List<User> getUsers(){
-        return List.of(
-                new User("bigburd@gmail.com", "Big", "Burd",
-                        LocalDate.of(1999, Month.JANUARY, 17),
-                        24)
-        );
+        return userRepository.findAll();
     }
 }

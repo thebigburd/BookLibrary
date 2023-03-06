@@ -25,6 +25,9 @@ public class User {
     private LocalDate dateOfBirth;
     private Integer age;
 
+    public User() {
+    }
+
     public User(String email, String name, String surname, LocalDate dateOfBirth, Integer age) {
         this.email = email;
         this.name = name;
@@ -92,4 +95,6 @@ public class User {
                 ", age=" + age +
                 '}';
     }
+
+
 }

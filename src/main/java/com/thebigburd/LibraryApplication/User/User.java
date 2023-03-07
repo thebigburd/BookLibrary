@@ -3,6 +3,7 @@ package com.thebigburd.LibraryApplication.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Table(name="people")
@@ -23,17 +24,17 @@ public class User {
     private String name;
     private String surname;
     private LocalDate dateOfBirth;
+    @Transient
     private Integer age;
 
     public User() {
     }
 
-    public User(String email, String name, String surname, LocalDate dateOfBirth, Integer age) {
+    public User(String email, String name, String surname, LocalDate dateOfBirth) {
         this.email = email;
         this.name = name;
         this.surname = surname;
         this.dateOfBirth = dateOfBirth;
-        this.age = age;
     }
 
     public Long getId() {
@@ -77,7 +78,8 @@ public class User {
     }
 
     public Integer getAge() {
-        return age;
+
+        return Period.between(getDateOfBirth(), LocalDate.now()).getYears();
     }
 
     public void setAge(Integer age) {

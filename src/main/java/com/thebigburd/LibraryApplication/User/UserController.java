@@ -1,10 +1,12 @@
 package com.thebigburd.LibraryApplication.User;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.rmi.ServerException;
 import java.util.List;
 
 @RestController
@@ -21,5 +23,10 @@ public class UserController {
     @GetMapping
     public List<User> getUsers() {
         return userService.getUsers();
+    }
+
+    @PostMapping
+    public void registerUser(@RequestBody User newUser){
+        userService.saveUser(newUser);
     }
 }

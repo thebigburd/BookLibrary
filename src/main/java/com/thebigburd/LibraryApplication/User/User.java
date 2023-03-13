@@ -23,6 +23,8 @@ public class User {
     private String email;
     private String name;
     private String surname;
+
+    // Date of Birth uses YYYY-MM-DD format
     private LocalDate dateOfBirth;
     @Transient
     private Integer age;

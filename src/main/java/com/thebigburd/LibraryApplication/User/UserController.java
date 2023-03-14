@@ -17,13 +17,18 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping(path = "userlist")
     public List<User> getUsers() {
         return userService.getUsers();
     }
 
-    @PostMapping
+    @PostMapping(path = "registerUser")
     public void registerUser(@RequestBody User newUser){
         userService.saveUser(newUser);
+    }
+
+    @DeleteMapping(path = "{userId}")
+    public void deleteUser(@PathVariable ("userId") Long id){
+        userService.deleteUser(id);
     }
 }

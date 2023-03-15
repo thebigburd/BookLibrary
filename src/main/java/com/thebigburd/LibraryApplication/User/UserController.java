@@ -17,9 +17,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping(path = "{userId}")
+    public User getUser(@PathVariable ("userId") Long id){
+        return userService.getUser(id);
+    }
+
     @GetMapping(path = "userlist")
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public List<User> getUserlist() {
+        return userService.getUserlist();
     }
 
     @PostMapping(path = "registerUser")
@@ -27,8 +32,16 @@ public class UserController {
         userService.saveUser(newUser);
     }
 
-    @DeleteMapping(path = "{userId}")
+    @DeleteMapping(path = "delete/{userId}")
     public void deleteUser(@PathVariable ("userId") Long id){
         userService.deleteUser(id);
     }
+
+    @PutMapping(path = "update/{userId}")
+    public void updateUser(@PathVariable ("userId") Long id,
+                           @RequestParam(required = false) String name,
+                           @RequestParam(required = false) String email){
+        userService.updateUser(id, name, email);
+    }
+
 }

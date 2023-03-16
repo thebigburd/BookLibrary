@@ -53,7 +53,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(Long id,String name, String email) {
+    public void updateUser(Long id,String name, String surname, String email) {
         User person = getUser(id);
 
         if(name != null &&
@@ -63,6 +63,16 @@ public class UserService {
             }
             else{
                 person.setName(name);
+            }
+        }
+
+        if(surname != null &&
+                surname.length() > 0){
+            if(Objects.equals(person.getSurname(), surname)){
+                throw new IllegalArgumentException("This name is already linked with this user.");
+            }
+            else{
+                person.setSurname(surname);
             }
         }
 

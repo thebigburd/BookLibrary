@@ -12,6 +12,7 @@ import java.util.List;
 @Configuration
 public class UserConfig {
 
+    // Two Database entries for request testing purposes.
     @Bean
     CommandLineRunner commandLineRunner(UserRepository userRepository) {
         return args -> {

@@ -4,6 +4,7 @@ package com.thebigburd.LibraryApplication.Book;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class Book {
@@ -15,13 +16,17 @@ public class Book {
     private String description;
     private int publishYear;
 
+    @Transient
+    private boolean borrowed;
+
     public Book() {
     }
 
-    public Book(String name, String description, int publishYear) {
+    public Book(String name, String description, int publishYear, boolean borrowed) {
         this.name = name;
         this.description = description;
         this.publishYear = publishYear;
+        this.borrowed = false;
     }
 
     public Long getId() {
@@ -56,6 +61,14 @@ public class Book {
         this.publishYear = publishYear;
     }
 
+    public boolean isBorrowed() {
+        return borrowed;
+    }
+
+    public void setBorrowed(boolean borrowed) {
+        this.borrowed = borrowed;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -63,6 +76,7 @@ public class Book {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", publishYear=" + publishYear +
+                ", borrowed=" + borrowed +
                 '}';
     }
 }

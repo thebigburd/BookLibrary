@@ -1,5 +1,7 @@
 package com.thebigburd.LibraryApplication.Book;
 
+import com.thebigburd.LibraryApplication.User.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +13,11 @@ import java.util.Optional;
 public class BookService {
 
     BookRepository bookRepository;
+
+    @Autowired
+    public BookService(BookRepository bookRepository){
+        this.bookRepository = bookRepository;
+    }
 
     public Book getBook(Long id){
         if(bookRepository.existsById(id)){

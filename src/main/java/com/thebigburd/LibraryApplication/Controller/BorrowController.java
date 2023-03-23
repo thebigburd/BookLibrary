@@ -1,12 +1,15 @@
 package com.thebigburd.LibraryApplication.Controller;
 
 
+import com.thebigburd.LibraryApplication.Entity.Borrow;
 import com.thebigburd.LibraryApplication.Service.BorrowService;
+import com.thebigburd.LibraryApplication.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "app/borrow")
@@ -17,6 +20,17 @@ public class BorrowController {
     @Autowired
     public BorrowController(BorrowService borrowService){
         this.borrowService = borrowService;
+    }
+
+    @GetMapping(path = "status/{bookId}")
+    public Borrow getBookStatus(long bookId){
+        return borrowService.getBookStatus(bookId);
+    }
+
+
+    @GetMapping (path="list")
+    public List<Borrow> getAllBorrowed(){
+        return borrowService.getAllBorrowed();
     }
 
     @PostMapping(path = "{bookId}")

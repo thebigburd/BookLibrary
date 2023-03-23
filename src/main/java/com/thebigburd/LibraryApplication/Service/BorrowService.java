@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,6 +28,25 @@ public class BorrowService {
         this.userRepository = userRepository;
     }
 
+    public Borrow getBookStatus(long bookId) {
+        if(!bookRepository.existsById(bookId)){
+            throw new IllegalArgumentException("Book with id " +bookId + " does not exist.");
+        }
+        else{
+            Book book = bookRepository.findById(bookId).get();
+            Optional<Borrow> borrowOptional = borrowRepository.findBorrowByBook(book);
+            if(borrowOptional.isPresent()){
+                return borrowOptional.get();
+            }
+            else{
+                throw new RuntimeException("This book is currently available.");
+            }
+        }
+    }
+
+    public List<Borrow> getAllBorrowed() {
+        return borrowRepository.findAll();
+    }
 
     public void borrowBook(long bookId, long userId, LocalDate borrowDate, int duration) {
         Optional<Book> bookOptional = bookRepository.findById(bookId);
@@ -52,4 +72,5 @@ public class BorrowService {
             throw new IllegalArgumentException("Book with id " +bookId + " not found");
         }
     }
+
 }

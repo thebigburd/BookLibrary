@@ -23,10 +23,16 @@ public class BorrowController {
     }
 
     @GetMapping(path = "status/{bookId}")
-    public Borrow getBookStatus(long bookId){
+    public Borrow getBookStatus(@PathVariable("bookId") long bookId){
         return borrowService.getBookStatus(bookId);
     }
 
+
+    // Gets a User's list of borrowed books.
+    @GetMapping(path = "user/{userId}")
+    public List<Borrow> getUserBorrowed(@PathVariable("userId") long userId){
+        return borrowService.getUserBorrowed(userId);
+    }
 
     @GetMapping (path="list")
     public List<Borrow> getAllBorrowed(){
@@ -42,5 +48,16 @@ public class BorrowController {
             borrowDate = LocalDate.now();  // Use Current Date if not specified.
         }
         borrowService.borrowBook(bookId, userId, borrowDate, duration);
+    }
+
+    @DeleteMapping(path = "return/{bookId}")
+    public void returnBook(@PathVariable("bookId") long bookId, long userId){
+        borrowService.returnBook(bookId, userId);
+    }
+
+    @PutMapping(path = "update/{borrowId}")
+    public void updateBorrow(@PathVariable("borrowId") long borrowId,
+                             @RequestParam(required = false) LocalDate returnDate){
+        borrowService.updateBorrow(borrowId, returnDate);
     }
 }

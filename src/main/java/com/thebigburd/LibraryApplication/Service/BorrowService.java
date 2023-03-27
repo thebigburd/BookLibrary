@@ -9,7 +9,9 @@ import com.thebigburd.LibraryApplication.User.User;
 import com.thebigburd.LibraryApplication.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +46,13 @@ public class BorrowService {
         }
     }
 
+    public List<Borrow> getUserBorrowed(long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("This user does not exist."));
+        List<Borrow> userBorrowed = borrowRepository.findByUser(user);
+        return userBorrowed;
+    }
+
     public List<Borrow> getAllBorrowed() {
         return borrowRepository.findAll();
     }
@@ -61,6 +70,7 @@ public class BorrowService {
                     User user = userOptional.get();
                     // If limiting amount of books borrowed add another if condition and add "borrowed" field to User entity.
                     Borrow borrow = new Borrow(book, user, borrowDate, borrowDate.plusDays(duration));
+                    book.setBorrowed(true);
                     borrowRepository.save(borrow);
                 }
                 else{
@@ -73,4 +83,25 @@ public class BorrowService {
         }
     }
 
+    public void returnBook(long bookId, long userId) {
+        Optional<Borrow> borrowOptional = borrowRepository.findByBookIdAndUserId(bookId, userId);
+        if(borrowOptional.isPresent()){
+            Borrow borrowed = borrowOptional.get();
+            Book returnedBook = borrowed.getBook();
+            borrowRepository.delete(borrowed);
+            returnedBook.setBorrowed(false);
+            System.out.println("The book with id " +bookId +" has been successfully returned by user " +userId +".");
+        }
+        else{
+            throw new IllegalStateException("Could not find a result with the given IDs.");
+        }
+    }
+
+    @Transactional
+    public void updateBorrow(long borrowId, LocalDate returnDate) {
+        Borrow borrow = borrowRepository.findById(borrowId)
+                .orElseThrow(() -> new IllegalStateException("Invalid borrow ID."));
+        borrow.setReturnDate(returnDate);
+        borrowRepository.save(borrow);
+    }
 }

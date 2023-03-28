@@ -4,6 +4,7 @@ package com.thebigburd.LibraryApplication.Service;
 import com.thebigburd.LibraryApplication.Book.Book;
 import com.thebigburd.LibraryApplication.Book.BookRepository;
 import com.thebigburd.LibraryApplication.Entity.Borrow;
+import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
 import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
 import com.thebigburd.LibraryApplication.User.User;
 import com.thebigburd.LibraryApplication.User.UserRepository;
@@ -47,9 +48,7 @@ public class BorrowService {
     }
 
     public List<Borrow> getUserBorrowed(long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("This user does not exist."));
-        List<Borrow> userBorrowed = borrowRepository.findByUser(user);
+        List<Borrow> userBorrowed = borrowRepository.findByUserId(userId);
         return userBorrowed;
     }
 
@@ -83,25 +82,25 @@ public class BorrowService {
         }
     }
 
-    public void returnBook(long bookId, long userId) {
-        Optional<Borrow> borrowOptional = borrowRepository.findByBookIdAndUserId(bookId, userId);
+    public void deleteBorrowEntry(long borrowId) {
+        Optional<Borrow> borrowOptional = borrowRepository.findById(borrowId);
         if(borrowOptional.isPresent()){
             Borrow borrowed = borrowOptional.get();
-            Book returnedBook = borrowed.getBook();
             borrowRepository.delete(borrowed);
-            returnedBook.setBorrowed(false);
-            System.out.println("The book with id " +bookId +" has been successfully returned by user " +userId +".");
+            System.out.println(+borrowId + " has been successfully deleted.");
         }
         else{
-            throw new IllegalStateException("Could not find a result with the given IDs.");
+            throw new IllegalStateException("Could not find a result with the given ID.");
         }
     }
 
     @Transactional
-    public void updateBorrow(long borrowId, LocalDate returnDate) {
+    public void returnBook(long borrowId, LocalDate returnDate) {
         Borrow borrow = borrowRepository.findById(borrowId)
                 .orElseThrow(() -> new IllegalStateException("Invalid borrow ID."));
         borrow.setReturnDate(returnDate);
+        borrow.getBook().setBorrowed(false);
         borrowRepository.save(borrow);
+        System.out.println("The book with id " +borrow.getBook().getId() +" has been successfully returned by user " +borrow.getUser().getId() +".");
     }
 }

@@ -15,7 +15,7 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
 
     Optional<Borrow> findBorrowByBook(Book book);
 
-    List<Borrow> findByUser(User user);
+    List<Borrow> findByUserId(long userId);
 
     Optional<Borrow> findByBookIdAndUserId(long bookId, long userId);
 

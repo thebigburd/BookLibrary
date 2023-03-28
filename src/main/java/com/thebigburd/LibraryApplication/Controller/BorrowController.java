@@ -3,6 +3,7 @@ package com.thebigburd.LibraryApplication.Controller;
 
 import com.thebigburd.LibraryApplication.Entity.Borrow;
 import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
+import com.thebigburd.LibraryApplication.Mapper.BorrowMapper;
 import com.thebigburd.LibraryApplication.Service.BorrowService;
 import com.thebigburd.LibraryApplication.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "app/")
 public class BorrowController {
 
     BorrowService borrowService;
+
+    BorrowMapper borrowMapper;
 
     @Autowired
     public BorrowController(BorrowService borrowService){
@@ -31,9 +35,12 @@ public class BorrowController {
 
     // Gets a User's list of borrowed books.
     @GetMapping(path = "users/{userId}/borrowlist")
-    public List<Borrow> getUserBorrowed(@PathVariable("userId") long userId){
-        return borrowService.getUserBorrowed(userId);
+    public List<BorrowDTO> getUserBorrowed(@PathVariable("userId") long userId){
+        List<Borrow> userBorrowed = borrowService.getUserBorrowed(userId);
 
+        return userBorrowed.stream()
+                .map(borrowMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping (path="borrow/list")

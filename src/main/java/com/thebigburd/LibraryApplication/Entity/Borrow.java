@@ -1,8 +1,5 @@
 package com.thebigburd.LibraryApplication.Entity;
 
-import com.thebigburd.LibraryApplication.Book.Book;
-import com.thebigburd.LibraryApplication.User.User;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 

@@ -1,5 +1,7 @@
-package com.thebigburd.LibraryApplication.Book;
+package com.thebigburd.LibraryApplication.Controller;
 
+import com.thebigburd.LibraryApplication.Service.BookService;
+import com.thebigburd.LibraryApplication.Entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,5 +1,6 @@
-package com.thebigburd.LibraryApplication.User;
+package com.thebigburd.LibraryApplication.Repository;
 
+import com.thebigburd.LibraryApplication.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

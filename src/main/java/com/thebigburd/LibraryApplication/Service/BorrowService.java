@@ -1,18 +1,16 @@
 package com.thebigburd.LibraryApplication.Service;
 
 
-import com.thebigburd.LibraryApplication.Book.Book;
-import com.thebigburd.LibraryApplication.Book.BookRepository;
+import com.thebigburd.LibraryApplication.Entity.Book;
+import com.thebigburd.LibraryApplication.Repository.BookRepository;
 import com.thebigburd.LibraryApplication.Entity.Borrow;
-import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
 import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
-import com.thebigburd.LibraryApplication.User.User;
-import com.thebigburd.LibraryApplication.User.UserRepository;
+import com.thebigburd.LibraryApplication.Entity.User;
+import com.thebigburd.LibraryApplication.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

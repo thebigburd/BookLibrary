@@ -1,8 +1,7 @@
 package com.thebigburd.LibraryApplication.Repository;
 
-import com.thebigburd.LibraryApplication.Book.Book;
+import com.thebigburd.LibraryApplication.Entity.Book;
 import com.thebigburd.LibraryApplication.Entity.Borrow;
-import com.thebigburd.LibraryApplication.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,7 @@
-package com.thebigburd.LibraryApplication.Book;
+package com.thebigburd.LibraryApplication.Service;
 
-import com.thebigburd.LibraryApplication.User.UserRepository;
+import com.thebigburd.LibraryApplication.Entity.Book;
+import com.thebigburd.LibraryApplication.Repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,5 +1,7 @@
-package com.thebigburd.LibraryApplication.User;
+package com.thebigburd.LibraryApplication.Service;
 
+import com.thebigburd.LibraryApplication.Entity.User;
+import com.thebigburd.LibraryApplication.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ public class UserService {
 
 
     public User getUser(Long id){
+        System.out.println(userRepository.existsById(id));
         if(userRepository.existsById(id)){
             return userRepository.findById(id).get();
         }

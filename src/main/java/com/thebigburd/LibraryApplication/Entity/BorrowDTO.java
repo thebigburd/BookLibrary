@@ -1,7 +1,5 @@
 package com.thebigburd.LibraryApplication.Entity;
 
-import com.thebigburd.LibraryApplication.Book.Book;
-
 import java.time.LocalDate;
 
 public class BorrowDTO {

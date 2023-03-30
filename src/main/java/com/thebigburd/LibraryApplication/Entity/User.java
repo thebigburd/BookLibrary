@@ -1,4 +1,4 @@
-package com.thebigburd.LibraryApplication.User;
+package com.thebigburd.LibraryApplication.Entity;
 
 
 import javax.persistence.*;
@@ -25,6 +25,14 @@ public class User {
     }
 
     public User(String email, String name, String surname, LocalDate dateOfBirth) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public User(Long id, String email, String name, String surname, LocalDate dateOfBirth) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.surname = surname;

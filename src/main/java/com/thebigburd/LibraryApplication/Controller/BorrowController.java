@@ -5,7 +5,6 @@ import com.thebigburd.LibraryApplication.Entity.Borrow;
 import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
 import com.thebigburd.LibraryApplication.Mapper.BorrowMapper;
 import com.thebigburd.LibraryApplication.Service.BorrowService;
-import com.thebigburd.LibraryApplication.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;

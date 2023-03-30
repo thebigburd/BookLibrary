@@ -1,4 +1,4 @@
-package com.thebigburd.LibraryApplication.Book;
+package com.thebigburd.LibraryApplication.Entity;
 
 
 import javax.persistence.Entity;

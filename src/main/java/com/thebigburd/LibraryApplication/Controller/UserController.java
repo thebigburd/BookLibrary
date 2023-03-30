@@ -1,5 +1,7 @@
-package com.thebigburd.LibraryApplication.User;
+package com.thebigburd.LibraryApplication.Controller;
 
+import com.thebigburd.LibraryApplication.Entity.User;
+import com.thebigburd.LibraryApplication.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;

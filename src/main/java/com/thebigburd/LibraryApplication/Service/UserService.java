@@ -22,7 +22,6 @@ public class UserService {
 
 
     public User getUser(Long id){
-        System.out.println(userRepository.existsById(id));
         if(userRepository.existsById(id)){
             return userRepository.findById(id).get();
         }
@@ -61,22 +60,12 @@ public class UserService {
 
         if(name != null &&
                 name.length() > 0){
-            if(Objects.equals(person.getName(), name)){
-                   throw new IllegalArgumentException("This name is already linked with this user.");
-            }
-            else{
                 person.setName(name);
-            }
         }
 
         if(surname != null &&
                 surname.length() > 0){
-            if(Objects.equals(person.getSurname(), surname)){
-                throw new IllegalArgumentException("This name is already linked with this user.");
-            }
-            else{
                 person.setSurname(surname);
-            }
         }
 
         if(email != null &&
@@ -91,6 +80,6 @@ public class UserService {
             }
         }
 
-
+        userRepository.save(person);
     }
 }

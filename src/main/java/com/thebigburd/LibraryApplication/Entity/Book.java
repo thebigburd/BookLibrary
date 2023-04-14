@@ -29,6 +29,14 @@ public class Book {
         this.borrowed = false;
     }
 
+    public Book(long id, String name, String description, int publishYear, boolean borrowed) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.publishYear = publishYear;
+        this.borrowed = false;
+    }
+
     public Long getId() {
         return id;
     }

@@ -21,12 +21,9 @@ public class BookService {
     }
 
     public Book getBook(Long id){
-        if(bookRepository.existsById(id)){
-            return bookRepository.findById(id).get();
-        }
-        else{
-            throw new IllegalArgumentException("Book does not exist with the id " +id + ".");
-        }
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Book does not exist with the id " +id + "."));
+        return book;
     }
 
     public List<Book> getBookList(){
@@ -58,31 +55,19 @@ public class BookService {
         Book book = getBook(id);
 
         if(name != null &&
-                name.length() > 0){
-            if(Objects.equals(book.getName(), name)){
-                throw new IllegalArgumentException("This is already the current name of the book.");
-            }
-            else{
-                book.setName(name);
-            }
+                name.length() > 0) {
+            book.setName(name);
         }
 
         if(description != null &&
                 description.length() > 0){
-            if(Objects.equals(book.getDescription(), description)){
-                throw new IllegalArgumentException("This is already the current description of the book.");
-            }
-            else{
                 book.setDescription(description);
-            }
         }
 
-        if(Objects.equals(book.getPublishYear(), publishYear)){
-            throw new IllegalArgumentException("This is already the current publish year.");
-        }
-        else{
+        if(publishYear > 0){
             book.setPublishYear(publishYear);
         }
 
+        bookRepository.save(book);
     }
 }

@@ -29,7 +29,7 @@ public class BookServiceTest {
     public void getBookReturnsBookIfExists() {
         // Setup
         Book book = new Book(1L, "A Book", "A blank description", 2005, false );
-        when(bookRepository.findById(1L).get()).thenReturn(book);
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
         // Act
         Book result = bookService.getBook(1L);
@@ -70,7 +70,7 @@ public class BookServiceTest {
     public void addBook() {
         // Setup
         Book book = new Book(1L, "A Book", "A blank description", 2005, false );
-        when(bookRepository.findBookByName("A Book")).thenReturn(Optional.empty());
+        when(bookRepository.existsByName("A Book")).thenReturn(false);
 
         // Act
         bookService.addBook(book);
@@ -84,7 +84,7 @@ public class BookServiceTest {
     public void addBookThrowsExceptionIfExists(){
         // Setup
         Book book = new Book(1L, "A Book", "A blank description", 2005, false );
-        when(bookRepository.findBookByName("A Book")).thenReturn(Optional.of(book));
+        when(bookRepository.existsByName("A Book")).thenReturn(true);
 
         // Act
         bookService.addBook(book);

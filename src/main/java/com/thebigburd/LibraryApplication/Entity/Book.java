@@ -26,7 +26,7 @@ public class Book {
         this.name = name;
         this.description = description;
         this.publishYear = publishYear;
-        this.borrowed = false;
+        this.borrowed = borrowed;
     }
 
     public Book(long id, String name, String description, int publishYear, boolean borrowed) {
@@ -34,7 +34,7 @@ public class Book {
         this.name = name;
         this.description = description;
         this.publishYear = publishYear;
-        this.borrowed = false;
+        this.borrowed = borrowed;
     }
 
     public Long getId() {

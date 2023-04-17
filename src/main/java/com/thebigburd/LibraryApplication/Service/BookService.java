@@ -31,8 +31,7 @@ public class BookService {
     }
 
     public void addBook(Book book) {
-        Optional<Book> bookOptional = bookRepository.findBookByName(book.getName());
-        if(bookOptional.isPresent()){
+        if(bookRepository.existsByName(book.getName())){
             throw new IllegalArgumentException("This book already exists in the library.");
         }
         else{

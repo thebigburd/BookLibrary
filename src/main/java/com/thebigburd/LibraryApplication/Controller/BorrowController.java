@@ -26,11 +26,6 @@ public class BorrowController {
         this.borrowService = borrowService;
     }
 
-    @GetMapping(path = "book/status/{bookId}")
-    public Borrow getBookStatus(@PathVariable("bookId") long bookId){
-        return borrowService.getBookStatus(bookId);
-    }
-
 
     // Gets a User's list of borrowed books.
     @GetMapping(path = "users/{userId}/borrowlist")
@@ -40,6 +35,11 @@ public class BorrowController {
         return userBorrowed.stream()
                 .map(borrowMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "book/history/{bookId}")
+    public List<Borrow> getBookBorrowedHistory(@PathVariable("bookId") long bookId){
+        return borrowService.getBookBorrowedHistory(bookId);
     }
 
     @GetMapping (path="borrow/list")

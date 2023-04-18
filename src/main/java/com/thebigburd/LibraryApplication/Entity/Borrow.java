@@ -31,6 +31,14 @@ public class Borrow {
         this.returnDate = returnDate;
     }
 
+    public Borrow(long id, Book book, User user, LocalDate borrowDate, LocalDate returnDate) {
+        this.id = id;
+        this.book = book;
+        this.user = user;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
+    }
+
     public long getId() {
         return id;
     }

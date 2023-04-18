@@ -29,25 +29,21 @@ public class BorrowService {
         this.userRepository = userRepository;
     }
 
-    public Borrow getBookStatus(long bookId) {
-        if(!bookRepository.existsById(bookId)){
-            throw new IllegalArgumentException("Book with id " +bookId + " does not exist.");
-        }
-        else{
-            Book book = bookRepository.findById(bookId).get();
-            Optional<Borrow> borrowOptional = borrowRepository.findBorrowByBook(book);
-            if(borrowOptional.isPresent()){
-                return borrowOptional.get();
-            }
-            else{
-                throw new RuntimeException("This book is currently available.");
-            }
-        }
-    }
 
     public List<Borrow> getUserBorrowed(long userId){
+        if(userRepository.findById(userId).isEmpty()) {
+            throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
+        }
         List<Borrow> userBorrowed = borrowRepository.findByUserId(userId);
         return userBorrowed;
+    }
+
+    public List<Borrow> getBookBorrowedHistory(long bookId){
+        if(bookRepository.findById(bookId).isEmpty()) {
+            throw new IllegalArgumentException("Book with ID " + bookId + " does not exist.");
+        }
+        List<Borrow> bookBorrowHistory = borrowRepository.findByBookId(bookId);
+        return bookBorrowHistory;
     }
 
     public List<Borrow> getAllBorrowed() {

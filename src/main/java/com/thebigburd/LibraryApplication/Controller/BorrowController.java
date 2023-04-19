@@ -59,8 +59,8 @@ public class BorrowController {
     }
 
     @DeleteMapping(path = "borrow/delete/{borrowId}")
-    public void deleteBorrowEntry(@PathVariable("borrowId") long borrowId){
-        borrowService.deleteBorrowEntry(borrowId);
+    public void deleteBorrow(@PathVariable("borrowId") long borrowId){
+        borrowService.deleteBorrow(borrowId);
     }
 
     @PutMapping(path = "borrow/return/{borrowId}")

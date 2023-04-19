@@ -76,15 +76,13 @@ public class BorrowService {
         }
     }
 
-    public void deleteBorrowEntry(long borrowId) {
-        Optional<Borrow> borrowOptional = borrowRepository.findById(borrowId);
-        if(borrowOptional.isPresent()){
-            Borrow borrowed = borrowOptional.get();
-            borrowRepository.delete(borrowed);
-            System.out.println(+borrowId + " has been successfully deleted.");
+    public void deleteBorrow(long borrowId) {
+        if(borrowRepository.existsById(borrowId)){
+            borrowRepository.deleteById(borrowId);
+            System.out.println("Borrow Entry " +borrowId + " has been successfully deleted.");
         }
         else{
-            throw new IllegalStateException("Could not find a result with the given ID.");
+            throw new IllegalArgumentException("Could not find a result with the given ID.");
         }
     }
 

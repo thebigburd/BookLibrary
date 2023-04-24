@@ -4,44 +4,36 @@ import java.time.LocalDate;
 
 public class BorrowDTO {
 
-    private long id;
+    private final long id;
 
-    private Book book;
+    private final Book book;
 
-    private LocalDate borrowDate;
+    private final LocalDate borrowDate;
 
-    private LocalDate returnDate;
+    private final LocalDate returnDate;
+
+    public BorrowDTO(long id, Book book, LocalDate borrowDate, LocalDate returnDate) {
+        this.id = id;
+        this.book = book;
+        this.borrowDate = borrowDate;
+        this.returnDate = returnDate;
+    }
 
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Book getBook() {
         return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
     }
 
     public LocalDate getBorrowDate() {
         return borrowDate;
     }
 
-    public void setBorrowDate(LocalDate borrowDate) {
-        this.borrowDate = borrowDate;
-    }
-
     public LocalDate getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(LocalDate returnDate) {
-        this.returnDate = returnDate;
-    }
 }

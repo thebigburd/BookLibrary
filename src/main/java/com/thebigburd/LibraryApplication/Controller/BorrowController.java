@@ -22,8 +22,9 @@ public class BorrowController {
     BorrowMapper borrowMapper;
 
     @Autowired
-    public BorrowController(BorrowService borrowService){
+    public BorrowController(BorrowService borrowService, BorrowMapper borrowMapper){
         this.borrowService = borrowService;
+        this.borrowMapper = borrowMapper;
     }
 
 

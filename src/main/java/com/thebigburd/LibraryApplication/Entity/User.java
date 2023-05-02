@@ -1,6 +1,9 @@
 package com.thebigburd.LibraryApplication.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
@@ -16,7 +19,7 @@ public class User {
     private String name;
     private String surname;
 
-    // Date of Birth uses YYYY-MM-DD format
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     @Transient
     private Integer age;

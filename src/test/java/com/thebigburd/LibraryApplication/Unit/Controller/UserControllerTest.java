@@ -24,9 +24,6 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private UserRepository userRepository;
-
     @InjectMocks
     private UserController userController;
 

@@ -107,6 +107,7 @@ class UserControllerIntegrationTest {
 
         // Assert
         assertEquals(HttpStatus.OK, status);
+        assertEquals(1, userRepository.findAll().size());
 
     }
 

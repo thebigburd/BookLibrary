@@ -1,12 +1,10 @@
 package com.thebigburd.LibraryApplication.Entity;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
+@Table(name="book")
 public class Book {
 
     @Id
@@ -16,7 +14,6 @@ public class Book {
     private String description;
     private int publishYear;
 
-    @Transient
     private boolean borrowed;
 
     public Book() {

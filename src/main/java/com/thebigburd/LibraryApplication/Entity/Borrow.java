@@ -1,23 +1,28 @@
 package com.thebigburd.LibraryApplication.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name="borrow")
 public class Borrow {
 
     @Id
     @GeneratedValue
     private long id;
 
-    @OneToOne
+    @ManyToOne
     private Book book;
 
     @ManyToOne
     private User user;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate borrowDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate returnDate;
 
 

@@ -1,7 +1,7 @@
-package com.thebigburd.LibraryApplication.Controller;
+package com.thebigburd.LibraryApplication.Unit.Controller;
 
+import com.thebigburd.LibraryApplication.Controller.UserController;
 import com.thebigburd.LibraryApplication.Entity.User;
-import com.thebigburd.LibraryApplication.Repository.UserRepository;
 import com.thebigburd.LibraryApplication.Service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

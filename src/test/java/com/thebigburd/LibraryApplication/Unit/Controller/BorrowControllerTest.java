@@ -1,5 +1,6 @@
-package com.thebigburd.LibraryApplication.Controller;
+package com.thebigburd.LibraryApplication.Unit.Controller;
 
+import com.thebigburd.LibraryApplication.Controller.BorrowController;
 import com.thebigburd.LibraryApplication.Entity.Book;
 import com.thebigburd.LibraryApplication.Entity.Borrow;
 import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
@@ -45,13 +46,12 @@ public class BorrowControllerTest {
         User user = new User(1L, "JohnDoe@example.com", "John", "Doe", LocalDate.of(2000, 01, 01));
         LocalDate borrowDate = LocalDate.of(2023,4,1);
         LocalDate returnDate = borrowDate.plusDays(14);
-        Borrow borrow = new Borrow(1L, book, user, borrowDate, returnDate);
-        List<Borrow> borrowList = new ArrayList<>();
-        borrowList.add(borrow);
+        BorrowDTO borrow1DTO = new BorrowDTO(1L, book, borrowDate, returnDate);
+
+        List<BorrowDTO> borrowList = new ArrayList<>();
+        borrowList.add(borrow1DTO);
         when(borrowService.getUserBorrowed(anyLong())).thenReturn(borrowList);
 
-        BorrowDTO borrow1DTO = new BorrowDTO(1L, book, LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 15));
-        when(borrowMapper.toDTO(borrow)).thenReturn(borrow1DTO);
 
         // Act
         List<BorrowDTO> result = borrowController.getUserBorrowed(1L);
@@ -59,7 +59,7 @@ public class BorrowControllerTest {
         // Assert
         assertEquals(result.size(),1);
         BorrowDTO borrowDTO = result.get(0);
-        assertEquals(borrowDTO.getId(), borrow.getId());
+        assertEquals(1L, borrowDTO.getId());
         assertEquals(borrowDTO.getBook().getId(), book.getId());
         assertEquals(borrowDTO.getBook().getName(), book.getName());
         assertEquals(borrowDTO.getBook().getDescription(), book.getDescription());

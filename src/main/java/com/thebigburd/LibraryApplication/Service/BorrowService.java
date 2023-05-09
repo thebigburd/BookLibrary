@@ -2,6 +2,8 @@ package com.thebigburd.LibraryApplication.Service;
 
 
 import com.thebigburd.LibraryApplication.Entity.Book;
+import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
+import com.thebigburd.LibraryApplication.Mapper.BorrowMapper;
 import com.thebigburd.LibraryApplication.Repository.BookRepository;
 import com.thebigburd.LibraryApplication.Entity.Borrow;
 import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BorrowService {
@@ -22,20 +25,26 @@ public class BorrowService {
     BookRepository bookRepository;
     UserRepository userRepository;
 
+    BorrowMapper borrowMapper;
+
     @Autowired
-    public BorrowService(BorrowRepository borrowRepository, BookRepository bookRepository, UserRepository userRepository){
+    public BorrowService(BorrowRepository borrowRepository, BookRepository bookRepository, UserRepository userRepository, BorrowMapper borrowMapper){
         this.borrowRepository = borrowRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.borrowMapper = borrowMapper;
     }
 
 
-    public List<Borrow> getUserBorrowed(long userId){
+    public List<BorrowDTO> getUserBorrowed(long userId){
         if(userRepository.findById(userId).isEmpty()) {
             throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
         }
         List<Borrow> userBorrowed = borrowRepository.findByUserId(userId);
-        return userBorrowed;
+
+        return userBorrowed.stream()
+                .map(borrowMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public List<Borrow> getBookBorrowedHistory(long bookId){

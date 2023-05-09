@@ -19,23 +19,18 @@ public class BorrowController {
 
     BorrowService borrowService;
 
-    BorrowMapper borrowMapper;
 
     @Autowired
-    public BorrowController(BorrowService borrowService, BorrowMapper borrowMapper){
+    public BorrowController(BorrowService borrowService){
         this.borrowService = borrowService;
-        this.borrowMapper = borrowMapper;
     }
 
 
     // Gets a User's list of borrowed books.
     @GetMapping(path = "users/{userId}/borrowlist")
     public List<BorrowDTO> getUserBorrowed(@PathVariable("userId") long userId){
-        List<Borrow> userBorrowed = borrowService.getUserBorrowed(userId);
+        return borrowService.getUserBorrowed(userId);
 
-        return userBorrowed.stream()
-                .map(borrowMapper::toDTO)
-                .collect(Collectors.toList());
     }
 
     @GetMapping(path = "book/history/{bookId}")

@@ -1,11 +1,14 @@
-package com.thebigburd.LibraryApplication.Service;
+package com.thebigburd.LibraryApplication.Unit.Service;
 
 import com.thebigburd.LibraryApplication.Entity.Book;
 import com.thebigburd.LibraryApplication.Entity.Borrow;
+import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
 import com.thebigburd.LibraryApplication.Entity.User;
+import com.thebigburd.LibraryApplication.Mapper.BorrowMapper;
 import com.thebigburd.LibraryApplication.Repository.BookRepository;
 import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
 import com.thebigburd.LibraryApplication.Repository.UserRepository;
+import com.thebigburd.LibraryApplication.Service.BorrowService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -33,26 +36,33 @@ public class BorrowServiceTest {
     @Mock
     private BorrowRepository borrowRepository;
 
+    @Mock
+    private BorrowMapper borrowMapper;
+
     @InjectMocks
     private BorrowService borrowService;
 
 
     @Test
-    public void getUserBorrowedReturnsBorrows() {
+    public void getUserBorrowedReturnsBorrowDTOs() {
         // Setup
         Book book1 = new Book(1L, "Book 1", "Description of book 1", 2021, true);
         Book book2 = new Book(2L, "Book 2", "Description of book 2", 2022, true);
         User user = new User(1L, "JohnDoe@example.com", "John", "Doe", LocalDate.of(2000, 01, 01));
         Borrow borrow1 = new Borrow(1L, book1, user, LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 15));
         Borrow borrow2 = new Borrow(2L, book2, user, LocalDate.of(2023, 2, 1), LocalDate.of(2023, 3, 1));
+        BorrowDTO borrow1DTO = new BorrowDTO(1L, book1, LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 15));
+        BorrowDTO borrow2DTO = new BorrowDTO(2L, book2, LocalDate.of(2023, 2, 1), LocalDate.of(2023, 3, 1));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(borrowRepository.findByUserId(1L)).thenReturn(List.of(borrow1, borrow2));
+        when(borrowMapper.toDTO(borrow1)).thenReturn(borrow1DTO);
+        when(borrowMapper.toDTO(borrow2)).thenReturn(borrow2DTO);
 
         // Act
-        List<Borrow> result = borrowService.getUserBorrowed(1L);
+        List<BorrowDTO> result = borrowService.getUserBorrowed(1L);
 
         // Assert
-        assertEquals(List.of(borrow1,borrow2), result);
+        assertEquals(List.of(borrow1DTO,borrow2DTO), result);
     }
 
     @Test
@@ -63,7 +73,7 @@ public class BorrowServiceTest {
         when(borrowRepository.findByUserId(1L)).thenReturn(List.of());
 
         // Act
-        List<Borrow> result = borrowService.getUserBorrowed(1L);
+        List<BorrowDTO> result = borrowService.getUserBorrowed(1L);
 
         // Assert
         assertEquals(List.of(), result);

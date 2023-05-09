@@ -1,7 +1,8 @@
-package com.thebigburd.LibraryApplication.Service;
+package com.thebigburd.LibraryApplication.Unit.Service;
 
 import com.thebigburd.LibraryApplication.Entity.Book;
 import com.thebigburd.LibraryApplication.Repository.BookRepository;
+import com.thebigburd.LibraryApplication.Service.BookService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

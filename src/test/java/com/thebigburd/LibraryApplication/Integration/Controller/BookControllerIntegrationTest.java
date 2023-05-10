@@ -2,7 +2,6 @@ package com.thebigburd.LibraryApplication.Integration.Controller;
 
 
 import com.thebigburd.LibraryApplication.Entity.Book;
-import com.thebigburd.LibraryApplication.Entity.User;
 import com.thebigburd.LibraryApplication.Repository.BookRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +13,12 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,6 +90,7 @@ public class BookControllerIntegrationTest {
         assertEquals(expectedBook.isBorrowed(), result.isBorrowed());
     }
 
+    @DirtiesContext
     @Test
     @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void addBook() {

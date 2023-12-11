@@ -3,6 +3,8 @@ package com.thebigburd.LibraryApplication.Controller;
 import com.thebigburd.LibraryApplication.Service.BookService;
 import com.thebigburd.LibraryApplication.Entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,30 +21,54 @@ public class BookController {
     }
 
     @GetMapping(path = "{bookId}")
-    public Book getBook(@PathVariable("bookId") Long id) {
-        return bookService.getBook(id);
+    public ResponseEntity<Book> getBook(@PathVariable("bookId") Long id) {
+        try {
+            Book book = bookService.getBook(id);
+            return ResponseEntity.ok(book);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body(null);
+        }
     }
 
     @GetMapping(path = "booklist")
-    public List<Book> getBookList() {
-        return bookService.getBookList();
+    public ResponseEntity<List<Book>> getBookList() {
+        List<Book> bookList = bookService.getBookList();
+        return ResponseEntity.ok(bookList);
     }
 
     @PostMapping(path = "add")
-    public void addBook(@RequestBody Book book) {
-        bookService.addBook(book);
+    public ResponseEntity<String> addBook(@RequestBody Book book) {
+        try {
+            bookService.addBook(book);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Book added successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status((HttpStatus.BAD_REQUEST)).body(e.getMessage());
+        }
     }
 
     @DeleteMapping(path = "delete/{bookId}")
-    public void deleteBook(@PathVariable("bookId") Long id) {
-        bookService.deleteBook(id);
+    public ResponseEntity<String> deleteBook(@PathVariable("bookId") Long id) {
+        try {
+            bookService.deleteBook(id);
+            return ResponseEntity.ok("Book deleted successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping(path = "update/{bookId}")
-    public void updateBook(@PathVariable("bookId")Long id,
-                           @RequestParam(required = false) String name,
-                           @RequestParam(required = false) String description,
-                           @RequestParam(required = false) int publishYear) {
-        bookService.updateBook(id, name, description, publishYear);
+    public ResponseEntity<String> updateBook(@PathVariable("bookId")Long id,
+                                     @RequestParam(required = false) String name,
+                                     @RequestParam(required = false) String description,
+                                     @RequestParam(required = false) int publishYear) {
+        try {
+            bookService.updateBook(id, name, description, publishYear);
+            return ResponseEntity.ok("Book updated successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

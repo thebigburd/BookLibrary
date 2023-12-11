@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class BookService {
@@ -22,7 +20,7 @@ public class BookService {
 
     public Book getBook(Long id){
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Book does not exist with the id " +id + "."));
+                .orElseThrow(() -> new IllegalArgumentException("Book with the id " +id + " does not exist."));
         return book;
     }
 
@@ -37,12 +35,11 @@ public class BookService {
         else{
             bookRepository.save(book);
         }
-
     }
 
     public void deleteBook(Long id) {
         if(!bookRepository.existsById(id)){
-            throw new IllegalArgumentException("Book with id " +id +" does not exist.");
+            throw new IllegalArgumentException("Book with the id " +id +" does not exist.");
         }
         else{
             bookRepository.deleteById(id);

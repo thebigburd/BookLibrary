@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,8 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,16 +31,30 @@ public class BookControllerTest {
     BookController bookController;
 
     @Test
-    public void getBook(){
+    public void getBook() {
         // Setup
-        Book book = new Book(1L, "A Book", "A blank description", 2005, false );
+        Book book = new Book(1L, "A Book", "A blank description", 2005, false);
         when(bookService.getBook(1L)).thenReturn(book);
 
         // Act
-        Book result = bookController.getBook(1L);
+        ResponseEntity<Book> result = bookController.getBook(1L);
 
         // Assert
-        assertEquals(result, book);
+        assertEquals(book, result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    public void getBookFailsIfBookNotExist() {
+        // Setup
+        when(bookService.getBook(1L)).thenThrow(new IllegalArgumentException("Book does not exist with the id 1."));
+
+        // Act
+        ResponseEntity<Book> result = bookController.getBook(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(null, result.getBody());
     }
 
     @Test
@@ -52,10 +67,11 @@ public class BookControllerTest {
         when(bookService.getBookList()).thenReturn(bookList);
 
         // Act
-        List<Book> result = bookController.getBookList();
+        ResponseEntity<List<Book>> result = bookController.getBookList();
 
         // Assert
-        assertEquals(result, bookList);
+        assertEquals(bookList, result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
@@ -64,27 +80,74 @@ public class BookControllerTest {
         Book book = new Book(1L, "A Book", "A blank description", 2005, false );
 
         // Act
-        bookController.addBook(book);
+        ResponseEntity<String> result = bookController.addBook(book);
 
         // Assert
         verify(bookService).addBook(book);
+        assertEquals(HttpStatus.CREATED,result.getStatusCode() );
+        assertEquals("Book added successfully.", result.getBody());
+    }
+
+    @Test
+    public void addBookFailsIfExists() {
+        // Setup
+        Book book = new Book(1L, "A Book", "A blank description", 2005, false);
+        doThrow(new IllegalArgumentException("This book already exists in the library.")).when(bookService).addBook(book);
+
+        // Act
+        ResponseEntity<String> result = bookController.addBook(book);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("This book already exists in the library.", result.getBody());
     }
 
     @Test
     public void deleteBook() {
         // Act
-        bookController.deleteBook(1L);
+        ResponseEntity<String> result = bookController.deleteBook(1L);
 
         // Assert
         verify(bookService).deleteBook(1L);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Book deleted successfully.", result.getBody());
+    }
+
+    @Test
+    public void deleteBookFailsIfNotExist() {
+        // Setup
+        doThrow(new IllegalArgumentException("Book with id 1 does not exist.")).when(bookService).deleteBook(1L);
+
+        // Act
+        ResponseEntity<String> result = bookController.deleteBook(1L);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals("Book with id 1 does not exist.", result.getBody());
     }
 
     @Test
     public void updateBook() {
         // Act
-        bookController.updateBook(1L, "A Book", "A blank description",2005);
+        ResponseEntity<String> result = bookController.updateBook(1L, "A Book", "A blank description", 2005);
 
         // Assert
-        verify(bookService).updateBook(1L, "A Book", "A blank description",2005);
+        verify(bookService).updateBook(1L, "A Book", "A blank description", 2005);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Book updated successfully", result.getBody());
+    }
+
+    @Test
+    public void updateBookFailsIfBookNotExist() {
+        // Setup
+        doThrow(new IllegalArgumentException("Book with the id 1 does not exist.")).when(bookService)
+                .updateBook(1L, "A Book", "A blank description", 2005);
+
+        // Act
+        ResponseEntity<String> result = bookController.updateBook(1L, "A Book", "A blank description", 2005);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals("Book with the id 1 does not exist.", result.getBody());
     }
 }

@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void saveUser(User newUser) {
+    public void addUser(User newUser) {
         Optional<User> userOptional = userRepository.findUserByEmail(newUser.getEmail());
         if(userOptional.isPresent()){
             throw new IllegalStateException("Email already in use.");

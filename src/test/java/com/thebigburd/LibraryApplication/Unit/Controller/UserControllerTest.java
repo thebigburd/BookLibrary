@@ -8,14 +8,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -28,60 +29,146 @@ public class UserControllerTest {
     private UserController userController;
 
     @Test
-    public void testGetUser() {
+    public void getUser() {
         // Setup
         User user = new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
         when(userService.getUser(1L)).thenReturn(user);
 
         // Act
-        User result = userController.getUser(1L);
+        ResponseEntity<User> result = userController.getUser(1L);
 
         // Assert
-        assertEquals(user, result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(user, result.getBody());
     }
 
     @Test
-    public void testGetUserlist() {
+    public void getUserFailsIfUserNotExist() {
         // Setup
-        List<User> userList = new ArrayList<>();
-        userList.add(new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1)));
-        userList.add(new User(2L, "jane.doe@example.com", "Jane", "Doe", LocalDate.of(1990, 1, 1)));
+        when(userService.getUser(2L)).thenThrow(new IllegalArgumentException("User does not exist with the id 2."));
+
+        // Act
+        ResponseEntity<User> result = userController.getUser(2L);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(null, result.getBody());
+    }
+
+
+    @Test
+    public void getUserList() {
+        // Setup
+        List<User> userList = Arrays.asList(
+                new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1)),
+                new User(2L, "jane.doe@example.com", "Jane", "Doe", LocalDate.of(1990, 1, 1))
+        );
         when(userService.getUserlist()).thenReturn(userList);
 
         // Act
-        List<User> result = userController.getUserlist();
+        ResponseEntity<List<User>> result = userController.getUserlist();
 
         // Assert
-        assertEquals(userList, result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(userList, result.getBody());
     }
 
+
     @Test
-    public void testRegisterUser() {
+    public void addUser() {
         // Setup
         User newUser = new User("john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
 
         // Act
-        userController.registerUser(newUser);
+        ResponseEntity<String> result = userController.addUser(newUser);
 
         // Assert
-        verify(userService).saveUser(newUser);
+        verify(userService).addUser(newUser);
+        assertEquals(HttpStatus.CREATED,result.getStatusCode() );
+        assertEquals("User added successfully.", result.getBody());
     }
 
     @Test
-    public void testDeleteUser() {
+    public void addUserFailsIfExists() {
+        // Setup
+        User newUser = new User("john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
+        doThrow(new IllegalArgumentException("Email already in use.")).when(userService).addUser(newUser);
+
         // Act
-        userController.deleteUser(1L);
+        ResponseEntity<String> result = userController.addUser(newUser);
 
         // Assert
-        verify(userService).deleteUser(1L);
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Email already in use.", result.getBody());
+    }
+
+
+    @Test
+    public void deleteUser() {
+        // Setup
+        doNothing().when(userService).deleteUser(1L);
+
+        // Act
+        ResponseEntity<String> resultFound = userController.deleteUser(1L);
+
+        // Assert
+        assertEquals(HttpStatus.OK, resultFound.getStatusCode());
+        assertEquals(resultFound.getBody(), "User deleted successfully.");
+
+
     }
 
     @Test
-    public void testUpdateUser() {
+    public void deleteUserFailsIfUserNotExist() {
+        // Setup
+        doThrow(new IllegalArgumentException("User with id 2 does not exist.")).when(userService).deleteUser(2L);
+
         // Act
-        userController.updateUser(1L, "John", "Doe", "johndoe@gmail.com");
+        ResponseEntity<String> resultNotFound = userController.deleteUser(2L);
 
         // Assert
-        verify(userService).updateUser(1L, "John", "Doe", "johndoe@gmail.com");
+        assertEquals(HttpStatus.NOT_FOUND, resultNotFound.getStatusCode());
+        assertEquals("User with id 2 does not exist.", resultNotFound.getBody());
+    }
+
+    @Test
+    public void updateUser() {
+        // Setup
+        doNothing().when(userService).updateUser(1L, "John", "Souls", null);
+
+        // Act
+        ResponseEntity<String> resultFound = userController.updateUser(1L, "John", "Souls", null);
+
+        // Assert
+        assertEquals(HttpStatus.OK, resultFound.getStatusCode());
+        assertEquals("User updated successfully", resultFound.getBody());
+    }
+
+    @Test
+    public void updateUserFailsIfUserNotExist() {
+        // Setup
+        doThrow(new IllegalArgumentException("User does not exist with the id 2.")).when(userService)
+                .updateUser(2L, "Jane", "Doe", "jane.doe@example.com");
+
+        // Act
+        ResponseEntity<String> result = userController.updateUser(2L, "Jane", "Doe", "jane.doe@example.com");
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("User does not exist with the id 2.", result.getBody());
+    }
+
+    @Test
+    public void updateUserFailsIfSameEmail() {
+        // Setup
+        doThrow(new IllegalArgumentException("Email is already in use.")).when(userService)
+                .updateUser(2L, "Jane", "Doe", "jane.doe@example.com");
+
+        // Act
+        ResponseEntity<String> result = userController.updateUser(2L, "Jane", "Doe", "jane.doe@example.com");
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("Email is already in use.", result.getBody());
     }
 }

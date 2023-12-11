@@ -77,7 +77,7 @@ public class UserServiceTest {
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.empty());
 
         // Act
-        userService.saveUser(user);
+        userService.addUser(user);
 
         // Assert
         verify(userRepository).save(user);
@@ -90,7 +90,7 @@ public class UserServiceTest {
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         // Act
-        userService.saveUser(user);
+        userService.addUser(user);
 
         // Assert exception thrown
     }

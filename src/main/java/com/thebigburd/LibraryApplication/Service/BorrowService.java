@@ -91,14 +91,14 @@ public class BorrowService {
             System.out.println("Borrow Entry " +borrowId + " has been successfully deleted.");
         }
         else{
-            throw new IllegalArgumentException("Could not find a result with the given ID.");
+            throw new IllegalArgumentException("Invalid borrow ID.");
         }
     }
 
     @Transactional
     public void returnBook(long borrowId, LocalDate returnDate) {
         Borrow borrow = borrowRepository.findById(borrowId)
-                .orElseThrow(() -> new IllegalStateException("Invalid borrow ID."));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid borrow ID."));
         borrow.setReturnDate(returnDate);
         borrow.getBook().setBorrowed(false);
         borrowRepository.save(borrow);

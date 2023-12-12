@@ -2,7 +2,6 @@ package com.thebigburd.LibraryApplication.Unit.Controller;
 
 import com.thebigburd.LibraryApplication.Controller.BookController;
 import com.thebigburd.LibraryApplication.Entity.Book;
-import com.thebigburd.LibraryApplication.Entity.User;
 import com.thebigburd.LibraryApplication.Service.BookService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

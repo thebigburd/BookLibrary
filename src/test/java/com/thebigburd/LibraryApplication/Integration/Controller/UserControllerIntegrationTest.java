@@ -2,7 +2,6 @@ package com.thebigburd.LibraryApplication.Integration.Controller;
 
 import com.thebigburd.LibraryApplication.Entity.User;
 import com.thebigburd.LibraryApplication.Repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class UserControllerIntegrationTest {
 
     @LocalServerPort
@@ -37,15 +36,9 @@ class UserControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-
-
-    @BeforeAll
-    public static void init(){
-        restTemplate = new RestTemplate();
-    }
-
     @BeforeEach
     public void setUp(){
+        restTemplate = new RestTemplate();
         baseUrl=baseUrl.concat(":").concat(port+"").concat("/app/user");
     }
 
@@ -59,9 +52,12 @@ class UserControllerIntegrationTest {
         String getUserUrl = baseUrl.concat("/1");
 
         // Act
-        User result = restTemplate.getForObject(getUserUrl, User.class);
+        ResponseEntity<User> responseEntity = restTemplate.getForEntity(getUserUrl, User.class);
 
         // Assert
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+        User result = responseEntity.getBody();
         assertEquals(expectedUser.getName(), result.getName());
         assertEquals(expectedUser.getSurname(), result.getSurname());
         assertEquals(expectedUser.getEmail(), result.getEmail());
@@ -80,13 +76,14 @@ class UserControllerIntegrationTest {
 
         // Act
         ParameterizedTypeReference<List<User>> responseType = new ParameterizedTypeReference<List<User>>() {};
-        List<User> response = restTemplate.exchange(getUserlistUrl, HttpMethod.GET, null, responseType).getBody();
+        ResponseEntity<List<User>> responseEntity = restTemplate.exchange(getUserlistUrl, HttpMethod.GET, null, responseType);
 
         // Assert
-        assertEquals(1, response.size());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(1, responseEntity.getBody().size());
         assertEquals(1, userRepository.findAll().size());
 
-        User result = response.get(0);
+        User result = responseEntity.getBody().get(0);
 
         assertEquals(expectedUser.getName(), result.getName());
         assertEquals(expectedUser.getSurname(), result.getSurname());
@@ -95,7 +92,6 @@ class UserControllerIntegrationTest {
         assertEquals(33, result.getAge());
     }
 
-    @DirtiesContext
     @Test
     @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void registerUser() {
@@ -106,12 +102,11 @@ class UserControllerIntegrationTest {
 
 
         // Act
-        HttpStatus status = restTemplate.postForEntity(registerUrl, request, User.class).getStatusCode();
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(registerUrl, request, String.class);
 
         // Assert
-        assertEquals(HttpStatus.OK, status);
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(1, userRepository.findAll().size());
-
     }
 
     @Test
@@ -123,9 +118,10 @@ class UserControllerIntegrationTest {
 
 
         // Act
-        restTemplate.delete(deleteUrl);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(deleteUrl, HttpMethod.DELETE, null, String.class);
 
         // Assert
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(0, userRepository.findAll().size());
     }
 
@@ -143,10 +139,10 @@ class UserControllerIntegrationTest {
         HttpEntity<User> request = new HttpEntity<>(user);
 
         // Act
-        HttpStatus response = restTemplate.exchange(updateUrl, HttpMethod.PUT, request, User.class,1).getStatusCode();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(updateUrl, HttpMethod.PUT, request, String.class,1);
 
         // Assert
-        assertEquals(HttpStatus.OK, response);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         User result = userRepository.findById(1L).get();
 

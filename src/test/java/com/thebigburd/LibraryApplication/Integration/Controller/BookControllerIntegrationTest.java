@@ -3,7 +3,6 @@ package com.thebigburd.LibraryApplication.Integration.Controller;
 
 import com.thebigburd.LibraryApplication.Entity.Book;
 import com.thebigburd.LibraryApplication.Repository.BookRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class BookControllerIntegrationTest {
 
     @LocalServerPort

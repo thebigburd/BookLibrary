@@ -13,9 +13,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,13 +37,9 @@ public class BookControllerIntegrationTest {
     private BookRepository bookRepository;
 
 
-    @BeforeAll
-    public static void init(){
-        restTemplate = new RestTemplate();
-    }
-
     @BeforeEach
     public void setUp(){
+        restTemplate = new RestTemplate();
         baseUrl=baseUrl.concat(":").concat(port+"").concat("/app/book");
     }
 
@@ -57,13 +53,14 @@ public class BookControllerIntegrationTest {
         String getBookUrl = baseUrl.concat("/1");
 
         // Act
-        Book result = restTemplate.getForObject(getBookUrl, Book.class);
+        ResponseEntity<Book> responseEntity = restTemplate.getForEntity(getBookUrl, Book.class);
 
         // Assert
-        assertEquals(expectedBook.getName(), result.getName());
-        assertEquals(expectedBook.getDescription(), result.getDescription());
-        assertEquals(expectedBook.getPublishYear(), result.getPublishYear());
-        assertEquals(expectedBook.isBorrowed(), result.isBorrowed());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedBook.getName(), responseEntity.getBody().getName());
+        assertEquals(expectedBook.getDescription(), responseEntity.getBody().getDescription());
+        assertEquals(expectedBook.getPublishYear(), responseEntity.getBody().getPublishYear());
+        assertEquals(expectedBook.isBorrowed(), responseEntity.getBody().isBorrowed());
     }
 
     @Test
@@ -75,22 +72,22 @@ public class BookControllerIntegrationTest {
         String getBooklistUrl = baseUrl.concat("/booklist");
 
         // Act
-        ParameterizedTypeReference<List<Book>> responseType = new ParameterizedTypeReference<List<Book>>() {};
-        List<Book> response = restTemplate.exchange(getBooklistUrl, HttpMethod.GET, null, responseType).getBody();
+        ParameterizedTypeReference<List<Book>> responseType = new ParameterizedTypeReference<List<Book>>() {
+        };
+        ResponseEntity<List<Book>> responseEntity = restTemplate.exchange(getBooklistUrl, HttpMethod.GET, null, responseType);
 
         // Assert
-        assertEquals(1, response.size());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(1, responseEntity.getBody().size());
         assertEquals(1, bookRepository.findAll().size());
 
-        Book result = response.get(0);
-
-        assertEquals(expectedBook.getName(), result.getName());
-        assertEquals(expectedBook.getDescription(), result.getDescription());
-        assertEquals(expectedBook.getPublishYear(), result.getPublishYear());
-        assertEquals(expectedBook.isBorrowed(), result.isBorrowed());
+        Book responseBody = responseEntity.getBody().get(0);
+        assertEquals(expectedBook.getName(), responseBody.getName());
+        assertEquals(expectedBook.getDescription(), responseBody.getDescription());
+        assertEquals(expectedBook.getPublishYear(), responseBody.getPublishYear());
+        assertEquals(expectedBook.isBorrowed(), responseBody.isBorrowed());
     }
 
-    @DirtiesContext
     @Test
     @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void addBook() {
@@ -100,13 +97,11 @@ public class BookControllerIntegrationTest {
         HttpEntity<Book> request = new HttpEntity<>(book);
 
         // Act
-        HttpStatus status = restTemplate.postForEntity(addBookUrl, request, Book.class).getStatusCode();
-
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(addBookUrl, request, String.class);
 
         // Assert
-        assertEquals(HttpStatus.OK, status);
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(1, bookRepository.findAll().size());
-
     }
 
     @Test
@@ -116,13 +111,12 @@ public class BookControllerIntegrationTest {
         String deleteUrl = baseUrl.concat("/delete/1");
         assertEquals(1, bookRepository.findAll().size());
 
-
         // Act
-        restTemplate.delete(deleteUrl);
+       ResponseEntity<String> responseEntity = restTemplate.exchange(deleteUrl, HttpMethod.DELETE, null, String.class);
 
         // Assert
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(0, bookRepository.findAll().size());
-
     }
 
     @Test
@@ -139,10 +133,10 @@ public class BookControllerIntegrationTest {
         HttpEntity<Book> request = new HttpEntity<>(book);
 
         // Act
-        HttpStatus response = restTemplate.exchange(updateUrl, HttpMethod.PUT, request, Book.class,1).getStatusCode();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(updateUrl, HttpMethod.PUT, request, String.class,1);
 
         // Assert
-        assertEquals(HttpStatus.OK, response);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         Book result = bookRepository.findById(1L).get();
 

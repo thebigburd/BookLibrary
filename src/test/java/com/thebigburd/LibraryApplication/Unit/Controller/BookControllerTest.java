@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
 public class BookControllerTest {
 
     @Mock
-    BookService bookService;
+    private BookService bookService;
 
     @InjectMocks
-    BookController bookController;
+    private BookController bookController;
 
     @Test
     public void getBook() {

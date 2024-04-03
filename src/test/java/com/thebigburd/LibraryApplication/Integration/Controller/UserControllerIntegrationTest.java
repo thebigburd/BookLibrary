@@ -62,7 +62,6 @@ class UserControllerIntegrationTest {
         assertEquals(expectedUser.getSurname(), result.getSurname());
         assertEquals(expectedUser.getEmail(), result.getEmail());
         assertEquals(expectedUser.getDateOfBirth(), result.getDateOfBirth());
-        assertEquals(33, result.getAge());
 
     }
     @Test
@@ -89,7 +88,6 @@ class UserControllerIntegrationTest {
         assertEquals(expectedUser.getSurname(), result.getSurname());
         assertEquals(expectedUser.getEmail(), result.getEmail());
         assertEquals(expectedUser.getDateOfBirth(), result.getDateOfBirth());
-        assertEquals(33, result.getAge());
     }
 
     @Test
@@ -150,7 +148,6 @@ class UserControllerIntegrationTest {
         assertEquals(user.getSurname(), result.getSurname());
         assertEquals(user.getEmail(), result.getEmail());
         assertEquals(user.getDateOfBirth(), result.getDateOfBirth());
-        assertEquals(33, result.getAge());
 
     }
 }

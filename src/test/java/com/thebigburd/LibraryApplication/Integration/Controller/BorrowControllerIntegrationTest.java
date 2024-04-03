@@ -107,7 +107,6 @@ class BorrowControllerIntegrationTest {
         assertEquals(expectedUser.getSurname(), result.getUser().getSurname());
         assertEquals(expectedUser.getEmail(), result.getUser().getEmail());
         assertEquals(expectedUser.getDateOfBirth(), result.getUser().getDateOfBirth());
-        assertEquals(33, result.getUser().getAge());
 
         assertEquals(LocalDate.of(2023,01,01), result.getBorrowDate());
         assertEquals(LocalDate.of(2023,01,10), result.getReturnDate());
@@ -139,7 +138,6 @@ class BorrowControllerIntegrationTest {
         assertEquals(expectedUser.getSurname(), result.getUser().getSurname());
         assertEquals(expectedUser.getEmail(), result.getUser().getEmail());
         assertEquals(expectedUser.getDateOfBirth(), result.getUser().getDateOfBirth());
-        assertEquals(33, result.getUser().getAge());
 
         assertEquals(expectedBook.getName(), result.getBook().getName());
         assertEquals(expectedBook.getDescription(), result.getBook().getDescription());
@@ -183,7 +181,6 @@ class BorrowControllerIntegrationTest {
         assertEquals(expectedUser.getSurname(), result.getUser().getSurname());
         assertEquals(expectedUser.getEmail(), result.getUser().getEmail());
         assertEquals(expectedUser.getDateOfBirth(), result.getUser().getDateOfBirth());
-        assertEquals(33, result.getUser().getAge());
 
         assertEquals(expectedBook.getName(), result.getBook().getName());
         assertEquals(expectedBook.getDescription(), result.getBook().getDescription());

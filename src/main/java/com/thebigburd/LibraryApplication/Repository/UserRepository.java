@@ -1,6 +1,6 @@
 package com.thebigburd.LibraryApplication.Repository;
 
-import com.thebigburd.LibraryApplication.Entity.User;
+import com.thebigburd.LibraryApplication.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserByName(String name);
 
-
-
+	Optional<User> findUserById(Long userId);
 }

@@ -1,8 +1,10 @@
 package com.thebigburd.LibraryApplication.Unit.Service;
 
-import com.thebigburd.LibraryApplication.Entity.User;
+import com.thebigburd.LibraryApplication.Controller.Request.UserRequest;
+import com.thebigburd.LibraryApplication.Model.User;
+import com.thebigburd.LibraryApplication.Model.enumeration.UserRole;
 import com.thebigburd.LibraryApplication.Repository.UserRepository;
-import com.thebigburd.LibraryApplication.Service.UserService;
+import com.thebigburd.LibraryApplication.Service.UserServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,12 +28,13 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Test
-    public void testGetUserReturnsUserWhenExists() {
+    public void getUserReturnsUserIfExists() {
         // Setup
-        User user = new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
+		User user = new User(1L, "john.doe@example.com", "John", "Doe", "password", "1 Street", "07123 456789",
+			UserRole.ROLE_ADMIN, LocalDate.of(1990, 1, 1), 0, 3 );
         when(userRepository.existsById(1L)).thenReturn(true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
@@ -43,7 +46,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetUserThrowsExceptionInvalidId() {
+    public void getUserThrowsExceptionInvalidId() {
         // Setup
         when(userRepository.existsById(1L)).thenReturn(false);
 
@@ -54,12 +57,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetUserList() {
+    public void getUserlistReturnsAllUsers() {
         // Setup
 
         List<User> userList = Arrays.asList(
-                new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1)),
-                new User(2L, "jane.doe@example.com", "Jane", "Doe", LocalDate.of(1995, 1, 1))
+				new User(1L, "john.doe@example.com", "John", "Doe", "password", "1 Street", "07123 456789",
+				UserRole.ROLE_ADMIN, LocalDate.of(1990, 1, 1), 0, 3 ),
+				new User(2L, "jane.doe@example.com", "Jane", "Doe", "password", "1 Street", "07111 111111",
+				UserRole.ROLE_USER, LocalDate.of(1995, 1, 1), 0, 3 )
         );
         when(userRepository.findAll()).thenReturn(userList);
 
@@ -71,9 +76,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testSaveUser() {
+    public void addUserToRepository() {
         // Setup
-        User user = new User(null, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
+        User user = new User(1L, "john.doe@example.com", "John", "Doe", "password", "1 Street", "07123 456789",
+			UserRole.ROLE_ADMIN, LocalDate.of(1990, 1, 1), 0, 3 );
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.empty());
 
         // Act
@@ -84,9 +90,10 @@ public class UserServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testSaveUserWithExistingEmail() {
+    public void addUserWithExistingEmailThrowsException() {
         // Setup
-        User user = new User(null, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
+        User user = new User(null, "john.doe@example.com", "John", "Doe", "password", "1 Street", "07123 456789",
+			UserRole.ROLE_ADMIN, LocalDate.of(1990, 1, 1), 0, 3 );
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         // Act
@@ -96,7 +103,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testDeleteUser() {
+    public void deleteUser() {
 
         // Setup
         when(userRepository.existsById(1L)).thenReturn(true);
@@ -109,7 +116,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testDeleteNonExistingUser() {
+    public void deleteNonExistingUserThrowsException() {
         // Setup
         when(userRepository.existsById(1L)).thenReturn(false);
 
@@ -121,35 +128,43 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testUpdateUser() {
+    public void updateUserSavesToRepository() {
 
-        // SetUp
-        User user = new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
-        when(userRepository.existsById(1L)).thenReturn(true);
+        // Setup
+		User user = new User(1L, "john.doe@example.com", "John", "Doe", "password", "1 Street", "07123 456789",
+			UserRole.ROLE_ADMIN, LocalDate.of(1990, 1, 1), 0, 3 );
+		UserRequest userRequest = new UserRequest();
+		userRequest.setEmail("jane.doe@example.com");
+		userRequest.setName("Jane");
+		userRequest.setDateOfBirth(LocalDate.of(2000,1,1));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.findUserByEmail("jane.doe@example.com")).thenReturn(Optional.empty());
 
         // Act
-        userService.updateUser(1L, "Jane", "Doe", "jane.doe@example.com");
+        userService.updateUser(1L, userRequest);
 
         // Assert
         verify(userRepository).save(user);
         assertEquals("Jane", user.getName());
         assertEquals("Doe", user.getSurname());
         assertEquals("jane.doe@example.com", user.getEmail());
+        assertEquals(LocalDate.of(2000, 1, 1), user.getDateOfBirth());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateUserWithUsedEmail() {
         // Setup
-        User user = new User(1L, "john.doe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
-        User user2 = new User(2L, "jane.doe@example.com", "Jane", "Doe", LocalDate.of(1990, 1, 1));
-        when(userRepository.existsById(2L)).thenReturn(true);
-        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+		User user = new User(1L, "john.doe@example.com", "John", "Doe", "password", "1 Street", "07123 456789",
+			UserRole.ROLE_ADMIN, LocalDate.of(1990, 1, 1), 0, 3 );
+		User user2 = new User(2L, "jane.doe@example.com", "Jane", "Doe", "password", "1 Street", "07111 111111",
+			UserRole.ROLE_USER, LocalDate.of(1995, 1, 1), 0, 3 );
+        UserRequest userRequest = new UserRequest();
+		userRequest.setEmail("john.doe@example.com");
+		when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
         when(userRepository.findUserByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
 
         // Act
-        userService.updateUser(2l,"Jane", "Doe", "john.doe@example.com");
+        userService.updateUser(2L, userRequest);
 
         // Assert
     }

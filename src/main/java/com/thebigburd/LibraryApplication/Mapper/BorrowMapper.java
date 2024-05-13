@@ -1,7 +1,7 @@
 package com.thebigburd.LibraryApplication.Mapper;
 
-import com.thebigburd.LibraryApplication.Entity.Borrow;
-import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
+import com.thebigburd.LibraryApplication.Model.Borrow;
+import com.thebigburd.LibraryApplication.Model.BorrowDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

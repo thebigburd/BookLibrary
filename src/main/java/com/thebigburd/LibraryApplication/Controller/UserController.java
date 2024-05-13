@@ -15,6 +15,7 @@ import java.util.Map;
 import static java.time.LocalDateTime.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4000/")
 @RequestMapping(path = "athena/users")
 public class UserController {
 

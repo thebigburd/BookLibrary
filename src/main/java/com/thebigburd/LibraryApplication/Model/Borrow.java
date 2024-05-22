@@ -2,8 +2,8 @@ package com.thebigburd.LibraryApplication.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.thebigburd.LibraryApplication.Model.enumeration.BorrowStatus;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity

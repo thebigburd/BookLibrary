@@ -1,9 +1,9 @@
 package com.thebigburd.LibraryApplication.Model;
 
 
-import javax.persistence.*;
 
 import com.thebigburd.LibraryApplication.Model.enumeration.BookStatus;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "book")

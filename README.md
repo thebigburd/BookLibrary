@@ -1,5 +1,5 @@
 
-# Library of Books: Athena
+# Library API: Athena
 
 A Spring Boot project utilising Hibernate and a PostgreSQL database to simulate an online library where users can borrow books.
 
@@ -12,7 +12,13 @@ Clone the project
   git clone https://github.com/thebigburd/BookLibrary.git
 ```
 
-Go to the project directory
+Create a database in PostgreSQL named "athenadb". Alternatively change the datasource in the application.yml file to your own database.
+
+```bash
+  CREATE DATABASE athenadb;
+```
+
+Then go to the project directory
 
 ```bash
   cd src/main/java/com/thebigburd/LibraryApplication/LibraryApplication.java

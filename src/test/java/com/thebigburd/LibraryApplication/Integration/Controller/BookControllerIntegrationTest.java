@@ -1,154 +1,137 @@
-//package com.thebigburd.LibraryApplication.Integration.Controller;
-//
-//
-//import com.thebigburd.LibraryApplication.Entity.Book;
-//import com.thebigburd.LibraryApplication.Entity.enumeration.BookStatus;
-//import com.thebigburd.LibraryApplication.Repository.BookRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.web.server.LocalServerPort;
-//import org.springframework.core.ParameterizedTypeReference;
-//import org.springframework.http.HttpEntity;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.test.annotation.DirtiesContext;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.context.jdbc.Sql;
-//import org.springframework.web.client.RestTemplate;
-//import org.springframework.web.util.UriComponentsBuilder;
-//
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-//public class BookControllerIntegrationTest {
-//
-//    @LocalServerPort
-//    private int port;
-//
-//    private String baseUrl="http://localhost";
-//
-//    private static RestTemplate restTemplate;
-//
-//    @Autowired
-//    private BookRepository bookRepository;
-//
-//
-//    @BeforeEach
-//    public void setUp(){
-//        restTemplate = new RestTemplate();
-//        baseUrl=baseUrl.concat(":").concat(port+"").concat("/athena/library");
-//    }
-//
-//
-//    @Test
-//    @Sql(statements = "INSERT INTO book (id, name, description, publish_year, current_stock, total_stock, status) VALUES (1, 'A Book', 'A Description', 2023, 1, 1, 0)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void getBook() {
-//        // Setup
-//        Book expectedBook = new Book(1L, "A Book", "A blank description", 2005, 1, 1, BookStatus.AVAILABLE);
-//        String getBookUrl = baseUrl.concat("/1");
-//
-//        // Act
-//        ResponseEntity<Book> responseEntity = restTemplate.getForEntity(getBookUrl, Book.class);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(expectedBook.getName(), responseEntity.getBody().getName());
-//        assertEquals(expectedBook.getDescription(), responseEntity.getBody().getDescription());
-//        assertEquals(expectedBook.getPublishYear(), responseEntity.getBody().getPublishYear());
-//        assertEquals(BookStatus.AVAILABLE, responseEntity.getBody().getStatus());
-//    }
-//
-//    @Test
-//    @Sql(statements = "INSERT INTO book (id, name, description, publish_year, current_stock, total_stock, book_status) VALUES (1, 'A Book', 'A Description', 2023, 1, 1, AVAILABLE)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void getBookList() {
-//        // Setup
-//        Book expectedBook = new Book(1L, "A Book", "A blank description", 2005, 1, 1, BookStatus.AVAILABLE);
-//        String getBooklistUrl = baseUrl.concat("/booklist");
-//
-//        // Act
-//        ParameterizedTypeReference<List<Book>> responseType = new ParameterizedTypeReference<List<Book>>() {
-//        };
-//        ResponseEntity<List<Book>> responseEntity = restTemplate.exchange(getBooklistUrl, HttpMethod.GET, null, responseType);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(1, responseEntity.getBody().size());
-//        assertEquals(1, bookRepository.findAll().size());
-//
-//        Book responseBody = responseEntity.getBody().get(0);
-//        assertEquals(expectedBook.getName(), responseBody.getName());
-//        assertEquals(expectedBook.getDescription(), responseBody.getDescription());
-//        assertEquals(expectedBook.getPublishYear(), responseBody.getPublishYear());
-//        assertEquals(BookStatus.AVAILABLE, responseBody.getStatus());
-//    }
-//
-//    @Test
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void addBook() {
-//        // Setup
-//        Book book = new Book(1L, "A Book", "A blank description", 2005, 1, 1, BookStatus.AVAILABLE);
-//        String addBookUrl = baseUrl.concat("/add");
-//        HttpEntity<Book> request = new HttpEntity<>(book);
-//
-//        // Act
-//        ResponseEntity<String> responseEntity = restTemplate.postForEntity(addBookUrl, request, String.class);
-//
-//        // Assert
-//        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-//        assertEquals(1, bookRepository.findAll().size());
-//    }
-//
-//    @Test
-//    @Sql(statements = "INSERT INTO book (id, name, description, publish_year, current_stock, total_stock, book_status) VALUES (1, 'A Book', 'A Description', 2023, 1, 1, AVAILABLE)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    void deleteBook() {
-//        // Setup
-//        String deleteUrl = baseUrl.concat("/delete/1");
-//        assertEquals(1, bookRepository.findAll().size());
-//
-//        // Act
-//       ResponseEntity<String> responseEntity = restTemplate.exchange(deleteUrl, HttpMethod.DELETE, null, String.class);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(0, bookRepository.findAll().size());
-//    }
-//
-//    @Test
-//    @Sql(statements = "INSERT INTO book (id, name, description, publish_year, current_stock, total_stock, book_status) VALUES (1, 'A Book', 'A Description', 2023, 1, 1, AVAILABLE)", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void updateBook() {
-//        // Setup
-//        String updateUrl = UriComponentsBuilder.fromHttpUrl(baseUrl.concat("/update/{userId}"))
-//                .queryParam("name", "A New Book")
-//                .queryParam("description","A New Description")
-//                .queryParam("publishYear", 2000)
-//                .queryParam("totalStock", 2)
-//                .queryParam("BookStatus", BookStatus.UNAVAILABLE)
-//                .build().toUriString();
-//
-//        Book book = new Book(1L, "A New Book", "A New Description", 2000, 1, 2, BookStatus.UNAVAILABLE);
-//        HttpEntity<Book> request = new HttpEntity<>(book);
-//
-//        // Act
-//        ResponseEntity<String> responseEntity = restTemplate.exchange(updateUrl, HttpMethod.PUT, request, String.class,1);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//
-//        Book result = bookRepository.findById(1L).get();
-//
-//        assertEquals(book.getName(), result.getName());
-//        assertEquals(book.getDescription(), result.getDescription());
-//        assertEquals(book.getPublishYear(), result.getPublishYear());
-//        assertEquals(book.getTotalStock(), result.getTotalStock());
-//        assertEquals(book.getStatus(), result.getStatus());
-//    }
-//}
+package com.thebigburd.LibraryApplication.Integration.Controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thebigburd.LibraryApplication.Controller.Request.BookRequest;
+import com.thebigburd.LibraryApplication.Model.Book;
+import com.thebigburd.LibraryApplication.Model.enumeration.BookStatus;
+import com.thebigburd.LibraryApplication.Repository.BookRepository;
+import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
+import com.thebigburd.LibraryApplication.Service.BookServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Testcontainers
+public class BookControllerIntegrationTest {
+
+	@Container
+	public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
+		.withDatabaseName("testdb")
+		.withUsername("testuser")
+		.withPassword("password");
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private BookRepository bookRepository;
+
+	@Autowired
+	private BorrowRepository borrowRepository;
+
+	@Autowired
+	private BookServiceImpl bookService;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@BeforeEach
+	public void setUp() {
+		borrowRepository.deleteAll();
+		bookRepository.deleteAll();
+		Book bookOne = new Book(null, "First Book", "A blank description", 2000, 1, 1, BookStatus.AVAILABLE);
+		System.out.println( bookRepository.save(bookOne)) ;
+		Book bookTwo = new Book(null, "Second Book", "Another description", 2001, 1, 2, BookStatus.UNAVAILABLE);
+		System.out.println( bookRepository.save(bookTwo)) ;
+	}
+
+	@Test
+	public void testGetBook() throws Exception {
+		Book book = bookRepository.findAll().get(0);
+		mockMvc.perform(get("/athena/library/book/" + book.getId()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.book.name").value("First Book"))
+			.andExpect(jsonPath("$.data.book.description").value("A blank description"))
+			.andExpect(jsonPath("$.data.book.publishYear").value(2000))
+			.andExpect(jsonPath("$.data.book.currentStock").value(1))
+			.andExpect(jsonPath("$.data.book.totalStock").value(1))
+			.andExpect(jsonPath("$.data.book.status").value("AVAILABLE"));
+	}
+
+	@Test
+	public void testGetBookList() throws Exception {
+		mockMvc.perform(get("/athena/library/list"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.books").isArray())
+			.andExpect(jsonPath("$.data.books[0].name").value("First Book"))
+			.andExpect(jsonPath("$.data.books[1].name").value("Second Book"));
+	}
+
+	@Test
+	public void testAddBook() throws Exception {
+		BookRequest newBook = new BookRequest();
+		newBook.setName("New Book");
+		newBook.setDescription("New description");
+		newBook.setPublishYear(2024);
+		newBook.setCurrentStock(9);
+		newBook.setTotalStock(10);
+		newBook.setStatus(BookStatus.AVAILABLE);
+
+		mockMvc.perform(post("/athena/library/add")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(newBook)))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.data.book.name").value("New Book"))
+			.andExpect(jsonPath("$.data.book.description").value("New description"))
+			.andExpect(jsonPath("$.data.book.publishYear").value(2024))
+			.andExpect(jsonPath("$.data.book.currentStock").value(9))
+			.andExpect(jsonPath("$.data.book.totalStock").value(10))
+			.andExpect(jsonPath("$.data.book.status").value("AVAILABLE"));
+	}
+
+	@Test
+	public void testDeleteBook() throws Exception {
+		Book book = bookRepository.findAll().get(0);
+		mockMvc.perform(delete("/athena/library/delete/" + book.getId()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.delete").value(true));
+	}
+
+	@Test
+	public void testUpdateBook() throws Exception {
+		Book book = bookRepository.findAll().get(0);
+		BookRequest bookRequest = new BookRequest();
+		bookRequest.setName("Updated Book");
+		bookRequest.setDescription("Updated description");
+		bookRequest.setPublishYear(2025);
+		bookRequest.setCurrentStock(4);
+		bookRequest.setTotalStock(5);
+		bookRequest.setStatus(BookStatus.UNAVAILABLE);
+
+		mockMvc.perform(put("/athena/library/update/" + book.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(bookRequest)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.update.name").value("Updated Book"))
+			.andExpect(jsonPath("$.data.update.description").value("Updated description"))
+			.andExpect(jsonPath("$.data.update.publishYear").value(2025))
+			.andExpect(jsonPath("$.data.update.currentStock").value(4))
+			.andExpect(jsonPath("$.data.update.totalStock").value(5))
+			.andExpect(jsonPath("$.data.update.status").value("UNAVAILABLE"));
+	}
+}

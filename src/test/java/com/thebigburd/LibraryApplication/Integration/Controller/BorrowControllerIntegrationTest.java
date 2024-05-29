@@ -1,237 +1,175 @@
-//package com.thebigburd.LibraryApplication.Integration.Controller;
-//
-//import com.thebigburd.LibraryApplication.Entity.Book;
-//import com.thebigburd.LibraryApplication.Entity.Borrow;
-//import com.thebigburd.LibraryApplication.Entity.BorrowDTO;
-//import com.thebigburd.LibraryApplication.Entity.User;
-//import com.thebigburd.LibraryApplication.Entity.enumeration.BookStatus;
-//import com.thebigburd.LibraryApplication.Repository.BookRepository;
-//import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
-//import com.thebigburd.LibraryApplication.Repository.UserRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.web.server.LocalServerPort;
-//import org.springframework.core.ParameterizedTypeReference;
-//import org.springframework.http.HttpEntity;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.test.annotation.DirtiesContext;
-//import org.springframework.test.context.jdbc.Sql;
-//import org.springframework.util.LinkedMultiValueMap;
-//import org.springframework.util.MultiValueMap;
-//import org.springframework.web.client.RestTemplate;
-//
-//import java.time.LocalDate;
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-//class BorrowControllerIntegrationTest {
-//
-//    @LocalServerPort
-//    private int port;
-//
-//    private String baseUrl="http://localhost";
-//
-//    private static RestTemplate restTemplate;
-//
-//    @Autowired
-//    private BookRepository bookRepository;
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    private BorrowRepository borrowRepository;
-//
-//    @BeforeEach
-//    public void setUp(){
-//        restTemplate = new RestTemplate();
-//        baseUrl=baseUrl.concat(":").concat(port+"").concat("/app/");
-//    }
-//
-//    @Test
-//    @Sql(scripts = "classpath:borrowscript.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM borrow WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void getUserBorrowed() {
-//        // Setup
-//        Book expectedBook = new Book(1L, "A Book", "A Description", 2023, 1, 1, BookStatus.UNAVAILABLE);
-//        String getBorrowUrl = baseUrl.concat("users/1/borrowlist");
-//
-//        // Act
-//        ParameterizedTypeReference<List<BorrowDTO>> responseType = new ParameterizedTypeReference<List<BorrowDTO>>() {};
-//        ResponseEntity<List<BorrowDTO>> responseEntity = restTemplate.exchange(getBorrowUrl, HttpMethod.GET, null, responseType);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(1, responseEntity.getBody().size());
-//
-//        BorrowDTO result = responseEntity.getBody().get(0);
-//        assertEquals(expectedBook.getName(), result.getBook().getName());
-//        assertEquals(expectedBook.getDescription(), result.getBook().getDescription());
-//        assertEquals(expectedBook.getPublishYear(), result.getBook().getPublishYear());
-//        assertEquals(expectedBook.getStatus(), result.getBook().getStatus());
-//
-//        assertEquals(LocalDate.of(2023, 1, 1), result.getBorrowDate());
-//        assertEquals(LocalDate.of(2023, 1,10), result.getReturnDate());
-//
-//
-//    }
-//
-//    @Test
-//    @Sql(scripts = "classpath:borrowscript.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM borrow WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void getBookBorrowedHistory() {
-//        // Setup
-//        User expectedUser = new User(1L, "johndoe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
-//        String getBorrowUrl = baseUrl.concat("book/history/1");
-//
-//        // Act
-//        ParameterizedTypeReference<List<Borrow>> responseType = new ParameterizedTypeReference<List<Borrow>>() {};
-//        ResponseEntity<List<Borrow>> responseEntity = restTemplate.exchange(getBorrowUrl, HttpMethod.GET, null, responseType);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(1, responseEntity.getBody().size());
-//
-//        Borrow result = responseEntity.getBody().get(0);
-//        assertEquals(expectedUser.getName(), result.getUser().getName());
-//        assertEquals(expectedUser.getSurname(), result.getUser().getSurname());
-//        assertEquals(expectedUser.getEmail(), result.getUser().getEmail());
-//        assertEquals(expectedUser.getDateOfBirth(), result.getUser().getDateOfBirth());
-//
-//        assertEquals(LocalDate.of(2023, 1, 1), result.getBorrowDate());
-//        assertEquals(LocalDate.of(2023, 1,10), result.getReturnDate());
-//    }
-//
-//    @Test
-//    @Sql(scripts = "classpath:borrowscript.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM borrow WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void getAllBorrowed() {
-//        // Setup
-//        Book expectedBook = new Book(1L, "A Book", "A Description", 2023, 1, 1, BookStatus.UNAVAILABLE);
-//        User expectedUser = new User(1L, "johndoe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
-//        expectedUser.setAge(33);
-//        String getAllBorrowUrl = baseUrl.concat("borrow/list");
-//
-//        // Act
-//        ParameterizedTypeReference<List<Borrow>> responseType = new ParameterizedTypeReference<List<Borrow>>() {};
-//        ResponseEntity<List<Borrow>> responseEntity = restTemplate.exchange(getAllBorrowUrl, HttpMethod.GET, null, responseType);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(1, responseEntity.getBody().size());
-//
-//        Borrow result = responseEntity.getBody().get(0);
-//
-//        assertEquals(expectedUser.getName(), result.getUser().getName());
-//        assertEquals(expectedUser.getSurname(), result.getUser().getSurname());
-//        assertEquals(expectedUser.getEmail(), result.getUser().getEmail());
-//        assertEquals(expectedUser.getDateOfBirth(), result.getUser().getDateOfBirth());
-//
-//        assertEquals(expectedBook.getName(), result.getBook().getName());
-//        assertEquals(expectedBook.getDescription(), result.getBook().getDescription());
-//        assertEquals(expectedBook.getPublishYear(), result.getBook().getPublishYear());
-//        assertEquals(expectedBook.getStatus(), result.getBook().getStatus());
-//
-//        assertEquals(LocalDate.of(2023, 1, 1), result.getBorrowDate());
-//        assertEquals(LocalDate.of(2023, 1,10), result.getReturnDate());
-//    }
-//
-//    @Test
-//    @Sql(statements = "INSERT INTO people (id, email, name, surname, date_of_birth) VALUES (1, 'johndoe@example.com', 'John', 'Doe', '1990-01-01')", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "INSERT INTO book (id, name, description, publish_year, borrowed) VALUES (1, 'A Book', 'A Description', 2023, 1, 1, BookStatus.AVAILABLE);", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM borrow WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void borrowBook() {
-//        // Setup
-//        Book expectedBook = new Book(1L, "A Book", "A Description", 2023, 1, 1, BookStatus.UNAVAILABLE);
-//        User expectedUser = new User(1L, "johndoe@example.com", "John", "Doe", LocalDate.of(1990, 1, 1));
-//        expectedUser.setAge(33);
-//        Borrow borrow = new Borrow(1L, expectedBook, expectedUser, LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 10));
-//        String borrowUrl = baseUrl.concat("borrow/1");
-//        MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
-//        params.add("bookId", 1L);
-//        params.add("userId", 1L);
-//        params.add("borrowDate", "2023-01-01");
-//        params.add("duration", 9);
-//        HttpEntity<?> request = new HttpEntity<Object>(params);
-//
-//        // Act
-//        ResponseEntity<String> responseEntity = restTemplate.postForEntity(borrowUrl, request, String.class);
-//
-//        // Assert
-//        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-//        assertEquals(1, borrowRepository.findAll().size());
-//
-//        Borrow result = borrowRepository.findAll().get(0);
-//
-//        assertEquals(expectedUser.getName(), result.getUser().getName());
-//        assertEquals(expectedUser.getSurname(), result.getUser().getSurname());
-//        assertEquals(expectedUser.getEmail(), result.getUser().getEmail());
-//        assertEquals(expectedUser.getDateOfBirth(), result.getUser().getDateOfBirth());
-//
-//        assertEquals(expectedBook.getName(), result.getBook().getName());
-//        assertEquals(expectedBook.getDescription(), result.getBook().getDescription());
-//        assertEquals(expectedBook.getPublishYear(), result.getBook().getPublishYear());
-//        assertEquals(expectedBook.getStatus(), result.getBook().getStatus());
-//
-//        assertEquals(LocalDate.of(2023, 1, 1), result.getBorrowDate());
-//        assertEquals(LocalDate.of(2023, 1,10), result.getReturnDate());
-//    }
-//
-//    @Test
-//    @Sql(scripts = "classpath:borrowscript.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void deleteBorrow() {
-//        // Setup
-//        String deleteUrl = baseUrl.concat("borrow/delete/{borrowId}");
-//        assertEquals(1, borrowRepository.findAll().size());
-//
-//        // Act
-//        ResponseEntity<String> responseEntity = restTemplate.exchange(deleteUrl, HttpMethod.DELETE,null, String.class, 1);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(0, borrowRepository.findAll().size());
-//
-//    }
-//
-//    @Test
-//    @Sql(scripts = "classpath:borrowscript.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM borrow WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM people WHERE id='1'",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    @Sql(statements = "DELETE FROM book WHERE id = '1'", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-//    void returnBook() {
-//        // Setup
-//        String returnUrl = baseUrl.concat("borrow/return/{borrowId}");
-//        HttpEntity<Long> request = new HttpEntity<Long>(1L);
-//        assertEquals(BookStatus.UNAVAILABLE, bookRepository.findById(1L).get().getStatus());
-//
-//        // Act
-//        ResponseEntity<String> responseEntity = restTemplate.exchange(returnUrl, HttpMethod.PUT, request, String.class,1);
-//
-//        // Assert
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//
-//        Book returnedBook = bookRepository.findById(1L).get();
-//        Borrow updatedBorrow = borrowRepository.findById(1L).get();
-//
-//        assertEquals(BookStatus.AVAILABLE, returnedBook.getStatus());
-//        assertEquals(LocalDate.now(), updatedBorrow.getReturnDate());
-//
-//    }
-//}
+package com.thebigburd.LibraryApplication.Integration.Controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thebigburd.LibraryApplication.Controller.Request.BorrowRequest;
+import com.thebigburd.LibraryApplication.Controller.Request.ReturnRequest;
+import com.thebigburd.LibraryApplication.Controller.Request.UserRequest;
+import com.thebigburd.LibraryApplication.Model.Book;
+import com.thebigburd.LibraryApplication.Model.Borrow;
+import com.thebigburd.LibraryApplication.Model.User;
+import com.thebigburd.LibraryApplication.Model.enumeration.BookStatus;
+import com.thebigburd.LibraryApplication.Model.enumeration.BorrowStatus;
+import com.thebigburd.LibraryApplication.Model.enumeration.UserRole;
+import com.thebigburd.LibraryApplication.Repository.BookRepository;
+import com.thebigburd.LibraryApplication.Repository.BorrowRepository;
+import com.thebigburd.LibraryApplication.Repository.UserRepository;
+import com.thebigburd.LibraryApplication.Service.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDate;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Testcontainers
+public class BorrowControllerIntegrationTest {
+
+	@Container
+	public static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
+		.withDatabaseName("testdb")
+		.withUsername("testuser")
+		.withPassword("password");
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private BookRepository bookRepository;
+
+	@Autowired
+	private BorrowRepository borrowRepository;
+
+	@Autowired
+	private UserServiceImpl userService;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@BeforeEach
+	public void setUp() {
+		borrowRepository.deleteAll();
+		bookRepository.deleteAll();
+		userRepository.deleteAll();
+		User user = new User(null, "john.doe@example.com",  "John","Doe", "password", "123 Main St", "0123 456789", UserRole.ROLE_USER,
+			LocalDate.of(1990, 1, 1), 1, 3);
+		userRepository.save(user);
+		Book bookOne = new Book(null, "First Book", "A blank description", 2000, 0, 2, BookStatus.UNAVAILABLE);
+		bookRepository.save(bookOne);
+		Borrow borrow = new Borrow(null, bookOne, user, LocalDate.of(2000, 1, 1), null, false, BorrowStatus.BORROWED);
+		borrowRepository.save(borrow);
+	}
+
+	@Test
+	public void testGetUserHistory() throws Exception {
+		User user = userRepository.findAll().get(0);
+		mockMvc.perform(get("/athena/users/user/" +user.getId() + "/history"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.borrows").isArray())
+			.andExpect(jsonPath("$.data.borrows[0].book.name").value("First Book"))
+			.andExpect(jsonPath("$.data.borrows[0].borrow_date").value("2000-01-01"))
+			.andExpect(jsonPath("$.data.borrows[0].returned").value(false))
+			.andExpect(jsonPath("$.data.borrows[0].borrow_status").value("BORROWED"));
+	}
+
+	@Test
+	public void testGetBookHistory() throws Exception {
+		Book book = bookRepository.findAll().get(0);
+		mockMvc.perform(get("/athena/library/book/" +book.getId() + "/history"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.borrows").isArray())
+			.andExpect(jsonPath("$.data.borrows[0].user.name").value("John"))
+			.andExpect(jsonPath("$.data.borrows[0].book.name").value("First Book"))
+			.andExpect(jsonPath("$.data.borrows[0].borrowDate").value("2000-01-01"))
+			.andExpect(jsonPath("$.data.borrows[0].returned").value(false))
+			.andExpect(jsonPath("$.data.borrows[0].borrowStatus").value("BORROWED"));
+	}
+
+	@Test
+	public void testGetAllBorrowed() throws Exception {
+		mockMvc.perform(get("/athena/library/borrow/list"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.borrows").isArray())
+			.andExpect(jsonPath("$.data.borrows[0].user.name").value("John"))
+			.andExpect(jsonPath("$.data.borrows[0].book.name").value("First Book"))
+			.andExpect(jsonPath("$.data.borrows[0].borrowDate").value("2000-01-01"))
+			.andExpect(jsonPath("$.data.borrows[0].returned").value(false))
+			.andExpect(jsonPath("$.data.borrows[0].borrowStatus").value("BORROWED"));
+	}
+
+	@Test
+	public void testBorrowBook() throws Exception {
+		User user = userRepository.findAll().get(0);
+		bookRepository.save(new Book(null, "New Book", "A new description", 2024, 1, 1, BookStatus.AVAILABLE));
+		Book newBook = bookRepository.findAll().get(1);
+		BorrowRequest borrowRequest = new BorrowRequest();
+		borrowRequest.setUserId(user.getId());
+		borrowRequest.setDuration(7);
+		borrowRequest.setBorrowDate(LocalDate.of(2024,1,1));
+
+		mockMvc.perform(post("/athena/library/book/" +newBook.getId() + "/borrow")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(borrowRequest)))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.data.borrow.user.name").value("John"))
+			.andExpect(jsonPath("$.data.borrow.user.borrowCount").value(2))
+			.andExpect(jsonPath("$.data.borrow.book.name").value("New Book"))
+			.andExpect(jsonPath("$.data.borrow.book.currentStock").value(0))
+			.andExpect(jsonPath("$.data.borrow.book.status").value("UNAVAILABLE"))
+			.andExpect(jsonPath("$.data.borrow.borrowDate").value("2024-01-01"))
+			.andExpect(jsonPath("$.data.borrow.returnDate").value("2024-01-08"))
+			.andExpect(jsonPath("$.data.borrow.returned").value(false))
+			.andExpect(jsonPath("$.data.borrow.borrowStatus").value("BORROWED"));
+	}
+
+	@Test
+	public void testDeleteBorrow() throws Exception {
+		Borrow borrow = borrowRepository.findAll().get(0);
+		borrow.setReturned(true);
+		borrowRepository.save(borrow);
+		mockMvc.perform(delete("/athena/library/borrow/delete/" + borrow.getId()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.delete").value(true));
+	}
+
+	@Test
+	public void testReturnBook() throws Exception {
+		User user = userRepository.findAll().get(0);
+		Borrow borrow = borrowRepository.findAll().get(0);
+		ReturnRequest returnRequest = new ReturnRequest();
+		returnRequest.setUserId(user.getId());
+		returnRequest.setReturnDate(LocalDate.of(2000, 1, 8));
+
+		mockMvc.perform(put("/athena/library/borrow/return/" + borrow.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(returnRequest)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.return.user.name").value("John"))
+			.andExpect(jsonPath("$.data.return.user.borrowCount").value(0))
+			.andExpect(jsonPath("$.data.return.book.name").value("First Book"))
+			.andExpect(jsonPath("$.data.return.book.currentStock").value(1))
+			.andExpect(jsonPath("$.data.return.book.status").value("AVAILABLE"))
+			.andExpect(jsonPath("$.data.return.borrowDate").value("2000-01-01"))
+			.andExpect(jsonPath("$.data.return.returnDate").value("2000-01-08"))
+			.andExpect(jsonPath("$.data.return.returned").value(true))
+			.andExpect(jsonPath("$.data.return.borrowStatus").value("RETURNED"));
+
+	}
+}

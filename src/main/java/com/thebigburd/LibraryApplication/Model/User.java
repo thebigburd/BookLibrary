@@ -19,7 +19,7 @@ public class User {
 	private String email;
 	private String name;
 	private String surname;
-	private String password;
+	private String password; // Should be hashed before storing in DB.
 	private String address;
 	private String phone;
 	private UserRole role;

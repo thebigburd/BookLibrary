@@ -66,6 +66,8 @@ testem.log
 Thumbs.db
 
 # Inactive Directories and Files
+ **/src/main/resources/schema.sql
+
 angular.json
 package-lock.json
 package.json

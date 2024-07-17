@@ -1,0 +1,13 @@
+<div class="book-grid">
+	<div *ngFor="let book of books" class="book-card">
+	  <div class="book-image">
+		<img src="../../assets/images/book-open-icon.svg" alt="{{ book.name }}" />
+	  </div>
+	  <div class="book-info">
+		<h2>{{ book.name }}</h2>
+		<p>Published: {{ book.publishYear }}</p>
+		<p>Status: {{ book.status }}</p>
+		<p>Stock: {{ book.currentStock }} / {{ book.totalStock }}</p>
+	  </div>
+	</div>
+  </div>

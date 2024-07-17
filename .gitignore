@@ -68,6 +68,4 @@ Thumbs.db
 # Inactive Directories and Files
 src/main/resources/schema.sql
 
-/src/app/
-/src/index.html
 

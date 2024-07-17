@@ -66,20 +66,8 @@ testem.log
 Thumbs.db
 
 # Inactive Directories and Files
- **/src/main/resources/schema.sql
+src/main/resources/schema.sql
 
-angular.json
-package-lock.json
-package.json
-server.ts
-.angular
 /src/app/
-/src/assets/
-/src/favicon.ico
 /src/index.html
-/src/main.server.ts
-/src/main.ts
-/src/styles.css
-tsconfig.app.json
-tsconfig.json
-tsconfig.spec.json
+

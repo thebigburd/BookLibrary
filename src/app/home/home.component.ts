@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { BookListComponent } from '../book-list/book-list.component';
@@ -28,10 +28,11 @@ import { BookService } from '../service/book.service';
 export class HomeComponent {
 	books: Book[] = [];
 	filteredBooks: Book[] = [];
+	bookService: BookService = inject(BookService);
 	searchTerm: string = '';
 	private searchSubject = new Subject<string>();
 
-	constructor(private bookService: BookService) {
+	constructor() {
 		this.searchSubject
 			.pipe(
 				debounceTime(300), // Delay Output if User still typing.
